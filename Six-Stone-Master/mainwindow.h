@@ -1,6 +1,6 @@
 ﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
+#include"jiemian.h"
 #include <QMainWindow>
 
 
@@ -20,6 +20,12 @@ private slots:
 //    void on_pushButton_clicked();
 
 //    void on_widget_windowTitleChanged(const QString &title);
+
+    void on_ButtonMM_clicked();
+
+    void on_ButtonMA_clicked();
+
+    void on_ButtonAA_clicked();
 
 private:
     Ui::MainWindow *ui;
