@@ -123,9 +123,7 @@ void Jiemian::mouseReleaseEvent(QMouseEvent *)
                 game->calculatBlack(clickx,clicky);
             }
             game->Gameflags=!game->Gameflags;//换手
-            QEventLoop eventloop;//创建一个事件循环
-            QTimer::singleShot(1000, &eventloop, SLOT(quit())); //计时1s
-            eventloop.exec();//启动一个事件循环
+            waitsec(1000);
             maxscore maxBlack;maxBlack=maxblack();
             maxscore maxWhite;maxWhite=maxwhite();
             if(maxBlack.score>maxWhite.score){
@@ -196,9 +194,7 @@ void Jiemian::AABattle()
         Sound_effect->play();//播放落子音效
         game->Gameflags=!game->Gameflags;//换手
         update();//重绘界面
-        QEventLoop eventloop;//创建一个事件循环
-        QTimer::singleShot(200, &eventloop, SLOT(quit())); //计时1s
-        eventloop.exec();//启动一个事件循环
+        waitsec(200);
     }
     while(game->state==playing)
     {
@@ -226,11 +222,16 @@ void Jiemian::AABattle()
         game->Gameflags=!game->Gameflags;//换手
         Sound_effect->play();//播放落子音效
         update();//重绘界面
-        QEventLoop eventloop;//创建一个事件循环
-        QTimer::singleShot(200, &eventloop, SLOT(quit())); //计时1s
-        eventloop.exec();//启动一个事件循环
+        waitsec(200);
     }
+    
+}
 
+void Jiemian::waitsec(int sec)
+{
+    QEventLoop eventloop;//创建一个事件循环
+    QTimer::singleShot(sec, &eventloop, SLOT(quit())); //计时1s
+    eventloop.exec();//启动一个事件循环   
 }
 
 

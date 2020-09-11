@@ -38,6 +38,7 @@ public:
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
     void AABattle();
+    void waitsec(int sec);
     ~Jiemian();
 signals:
 

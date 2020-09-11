@@ -26,6 +26,7 @@ private slots:
     void on_ButtonMA_clicked();
 
     void on_ButtonAA_clicked();
+    bool eventFilter(QObject *, QEvent *);
 
 private:
     Ui::MainWindow *ui;
