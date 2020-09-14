@@ -2,5 +2,6 @@
     <qresource prefix="/new/background">
         <file>reso/star1.gif</file>
         <file>reso/down.wav</file>
+        <file>reso/chess.jpg</file>
     </qresource>
 </RCC>

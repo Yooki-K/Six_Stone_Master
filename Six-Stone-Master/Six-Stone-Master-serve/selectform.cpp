@@ -22,7 +22,6 @@ Selectform::Selectform(QWidget *parent) :
     connect(ui->ButtonOn,&QPushButton::clicked,this,&Selectform::ButtonOnclicked);
 
 }
-
 Selectform::~Selectform()
 {
     delete ui;
@@ -106,7 +105,6 @@ bool Selectform::eventFilter(QObject *watched, QEvent *event)
 
 void Selectform::ButtonMMclicked()
 {
-    qDebug()<<"das";
     emit sendmes(MM,none);
     this->close();
 }

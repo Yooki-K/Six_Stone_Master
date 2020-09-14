@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.setWindowFlags(w.windowFlags()& Qt::WindowMaximizeButtonHint& Qt::WindowMinimizeButtonHint);
     w.showMaximized();
-    w.setWindowTitle("六子棋");
+    w.setWindowTitle("六子棋服务器");
     w.show();
     return a.exec();
 }

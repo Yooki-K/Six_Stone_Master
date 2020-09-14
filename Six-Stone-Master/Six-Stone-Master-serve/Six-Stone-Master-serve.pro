@@ -27,21 +27,26 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     gamemodel.cpp \
-    jiemian.cpp \
     server.cpp \
-    selectform.cpp
+    selectform.cpp \
+    chessboard.cpp \
+    ai.cpp \
+    gplayer.cpp
 
 HEADERS += \
         mainwindow.h \
     gamemodel.h \
-    jiemian.h \
     server.h \
     selectform.h \
-    database.hpp
+    database.hpp \
+    chessboard.h \
+    ai.h \
+    gplayer.h
 
 FORMS += \
         mainwindow.ui \
-    selectform.ui
+    selectform.ui \
+    chessboard.ui
 
 RESOURCES += \
     reso.qrc

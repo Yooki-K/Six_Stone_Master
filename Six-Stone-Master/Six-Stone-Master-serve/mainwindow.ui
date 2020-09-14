@@ -17,19 +17,6 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="Jiemian" name="widget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>410</y>
-      <width>120</width>
-      <height>80</height>
-     </rect>
-    </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
@@ -88,14 +75,6 @@ font: 26pt &quot;Adobe Devanagari&quot;;
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>Jiemian</class>
-   <extends>QWidget</extends>
-   <header>jiemian.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
