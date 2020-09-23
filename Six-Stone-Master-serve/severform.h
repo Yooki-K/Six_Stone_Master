@@ -10,26 +10,27 @@ class SeverForm;
 class SeverForm : public QWidget
 {
     Q_OBJECT
-
+private:
+    Ui::SeverForm *ui;
 public:
     explicit SeverForm(QWidget *parent = 0);
     ~SeverForm();
-    Ui::SeverForm *ui;
+    Server*server=0;
+
 private slots:
     void on_btcloses_clicked();
     void updateroom(Server *);
 
     void on_playerroom_itemDoubleClicked(QListWidgetItem *item);
 
-    void on_pushButton_clicked();
+public slots:
+    void on_btopenroom_clicked(QString ip="127.0.0.1", QString text="开房");
 
-    void on_btopenroom_clicked();
-
-    void on_playerroom_doubleClicked(const QModelIndex &index);
     void updatenum(int);
 signals:
     void closesever();
     void openroom(QString);
+    void closeroom();
     void connectroom(QString);
 };
 

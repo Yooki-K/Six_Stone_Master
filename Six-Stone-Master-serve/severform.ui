@@ -6,15 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>616</width>
+    <width>538</width>
     <height>564</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Adobe Devanagari</family>
+    <pointsize>14</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:rgb(230,255,255);</string>
+   <string notr="true"/>
   </property>
   <widget class="QListWidget" name="playerroom">
    <property name="geometry">
@@ -24,6 +30,9 @@
      <width>281</width>
      <height>381</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 12pt &quot;Arial&quot;;</string>
    </property>
    <property name="modelColumn">
     <number>0</number>
@@ -35,53 +44,77 @@
   <widget class="QLabel" name="youxidating">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>40</y>
-     <width>281</width>
-     <height>21</height>
+     <x>50</x>
+     <y>20</y>
+     <width>291</width>
+     <height>51</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Adobe Devanagari</family>
+     <pointsize>16</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(255,255,255);</string>
+   </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;游 戏 大 厅&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;游 戏 大 厅&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btcloses">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>270</y>
+     <x>400</x>
+     <y>260</y>
      <width>93</width>
-     <height>28</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string>关  服</string>
+    <string>关服</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btopenroom">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>220</y>
+     <x>400</x>
+     <y>200</y>
      <width>93</width>
-     <height>28</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string>开  房</string>
+    <string>开房</string>
    </property>
   </widget>
   <widget class="QLabel" name="currconnect">
    <property name="geometry">
     <rect>
-     <x>390</x>
+     <x>40</x>
      <y>510</y>
-     <width>201</width>
+     <width>381</width>
      <height>31</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>14</pointsize>
+     <weight>75</weight>
+     <italic>false</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="mouseTracking">
+    <bool>true</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(255,255,255);</string>
+   </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;当前连接人数：0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;当前连接人数(最大连接数为4)：0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
  </widget>

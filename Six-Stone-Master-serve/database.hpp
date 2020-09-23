@@ -4,6 +4,7 @@
 #include<QTcpSocket>
 #include<QTimer>
 #include<QEventLoop>
+
 #define WIDTH 1920
 #define HEIGHT 1080
 enum Gametype{MM,MA,AA};//游戏模式,创建游戏时赋值
@@ -14,7 +15,8 @@ const int rowline=21;
 const int columnline=21;
 const int r=20;
 const int one=45;
-enum what{isempty=-1,iswhite,isblack};
+enum what{iswhite=0,isblack,isempty};
+
 
  // 记录当前游戏状态是playingGame（正在游戏）还是readyToPlayingGame（等待对方按下准备按钮，然后开始游戏）
 enum playerStatus
@@ -54,10 +56,12 @@ enum comm_request_type
      COMM_CLIENT_UNDO_NO,
     //玩家游戏操作：认输//
     COMM_CLIENT_LOSE,
-    //玩家发来消息，对方掉线
-    COMM_CLIENT_GAMESTOP,
+    //玩家发来ip地址
+    COMM_CLIENT_IP,
     //玩家游戏操作：发送聊天信息//
-    COMM_CLIENT_CHAT
+    COMM_CLIENT_CHAT,
+    //玩家发送胜利，游戏结束
+    COMM_CLIENT_WIN
 };
 // 用户程序之间交互数据包的格式
 struct msg_request_struct

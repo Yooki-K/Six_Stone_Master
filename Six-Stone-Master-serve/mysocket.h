@@ -12,6 +12,13 @@ public:
     MySocket*match=0;
     Gamemodel *game=0;
     GPlayer*my=0;
+    QString ip="";
+    void clear(int n=0);
+
+signals:
+    void send(MySocket *,QByteArray);
+public slots:
+    void receiveMesfromc();
 };
 
 #endif // MYSOCKET_H

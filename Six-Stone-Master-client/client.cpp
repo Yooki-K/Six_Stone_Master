@@ -2,23 +2,24 @@
 
 Client::Client(QString dk, QString ip, QObject *parent) : QObject(parent)
 {
-    socket=new QTcpSocket;
+    iscon=0;
+    socket=new QTcpSocket(this);
     socket->connectToHost(QHostAddress(ip),dk.toUInt());
+    if(socket->waitForConnected()){ iscon=1;}
+    else{
+        QMessageBox::information(NULL,"连接失败","服务器连接失败（可能无访问权限或该端口服务器不存在）");
+    }
     connect(socket,SIGNAL(readyRead()),this->parent(),SLOT(receiveMessage()));
-    connect(this,SIGNAL(updateroom(QString)),this->parent(),SLOT(updateroom(QString)));
-   //获得本机ip地址
-      QList<QHostAddress> AddressList = QNetworkInterface::allAddresses();
-      foreach(QHostAddress address, AddressList){
-          if(address.protocol() == QAbstractSocket::IPv4Protocol &&
-             address != QHostAddress::Null &&
-             address != QHostAddress::LocalHost){
-              if (address.toString().contains("127.0.")){
-                continue;
-              }
-              myip = address.toString();
-              break;
-          }
-      }
+}
+
+Client::~Client()
+{
+    if(game!=0)
+    {
+        game->stop();
+        delete game;
+    }
+    if(socket!=0)delete socket;
 }
 
 
@@ -30,5 +31,5 @@ void Client::sendMessagetos(comm_request_type type,QString toc)
 
 void Client::sendMesschat(QString mes)
 {
-    sendMessagetos(COMM_CLIENT_CHAT, game->player1->name+':'+mes);
+    sendMessagetos(COMM_CLIENT_CHAT, mes);
 }

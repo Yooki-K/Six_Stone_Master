@@ -1,6 +1,6 @@
 ﻿#ifndef CLIENT_H
 #define CLIENT_H
-
+#include<QHostInfo>
 #include <QObject>
 #include<QTcpSocket>
 #include<QByteArray>
@@ -18,12 +18,13 @@ private:
 
 public:
     explicit Client(QString,QString,QObject *parent = nullptr);
-    QTcpSocket *socket;
-    Gamemodel *game;
+    ~Client();
+    QTcpSocket *socket=0;
+    Gamemodel *game=0;
     bool myflag;
-    QString myip;
+    bool iscon=0;
 signals:
-    void updateroom(QString);
+
 public slots:
     void sendMessagetos(comm_request_type type, QString toc);
     void sendMesschat(QString);

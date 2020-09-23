@@ -1,11 +1,17 @@
 ﻿#include "gamemodel.h"
 #include"chessboard.h"
 #include"ai.h"
-Gamemodel::Gamemodel(QObject *parent):QThread(parent)//parent为mainwindow
+Gamemodel::Gamemodel(QObject *parent,int n):QThread(parent),isonline(n)//parent为mainwindow
 {
     state=playing;//设置游戏模式为进行中
-    c=new Chessboard((QWidget*)parent,this);//创建棋盘界面到mainwindow
-    c->show();
+    if(isonline==0)
+    {
+        c=new Chessboard(0,this);//创建一个外棋盘界面
+        c->closeflag();//关闭黑白选择页面
+        c->setWindowTitle("六子棋");
+        c->showMaximized();
+
+    }
     //棋盘初始化
     for(int i=0;i<columnline;i++)
     {
@@ -33,19 +39,19 @@ Gamemodel::Gamemodel(QObject *parent):QThread(parent)//parent为mainwindow
             white_score[i][j]=0;
         }
     }
+    connect(this,SIGNAL(gameover()),this->parent(),SLOT(GameOver()));
 }
 
 Gamemodel::~Gamemodel()
 {
-    delete c;
-    delete player1;
-    delete player2;
+    if(c!=0){delete c;c=0;}
+    if(player1!=0){delete player1;player1=0;}
+    if(player2!=0){delete player2;player2=0;}
 }
 void Gamemodel::run()
 {
-    while(1)
-    {
-        if(!isonline)
+    while(!isstop){
+        if(isonline==-1)
         {
             if(player1->myflag)
             {
@@ -65,7 +71,8 @@ void Gamemodel::run()
                 c->update();
             }
         }
-        else{
+        if(isonline==0)
+        {
             if(player1->myflag)
             {
                 SPLAYER1
@@ -83,7 +90,7 @@ void Gamemodel::run()
                 c->Sound_effect->play();
                 c->update();
             }
-      }
+        }
     }
 }
 Gamestate Gamemodel::GameEnd(int x, int y)
@@ -133,6 +140,11 @@ int Gamemodel::IsSix(int x,int y)
 
 void Gamemodel::backStep(GPlayer *p)
 {
+    if(isonline==0&&backx==-1&&backy==-1)
+    {
+        QMessageBox::information(NULL,"请求失败","当前情况不能请求悔棋");
+        return;
+    }
     if(backx==p->backx&&backy==p->backy)
     {
         game_progress[p->backx][p->backy]=isempty;
@@ -142,6 +154,7 @@ void Gamemodel::backStep(GPlayer *p)
         game_progress[player2->backx][player2->backy]=isempty;
         game_progress[player1->backx][player1->backy]=isempty;
     }
+    backx=-1;backy=-1;
 //分数也要进行存储
 //    不进行分数存储，人机模式默认AI拒绝；
 //
@@ -152,8 +165,15 @@ void Gamemodel::backStep(GPlayer *p)
 void Gamemodel::giveup(GPlayer *p)
 {
     state=win;
-    connect(this,SIGNAL(gameoversignal(Gamestate,bool)),this->parent(),SLOT(GameOver(Gamestate,bool)));
+    connect(this,SIGNAL(gameoversignal(int,bool)),this->parent(),SLOT(GameOver(int,bool)));
     emit gameoversignal(state,!p->myflag);
+}
+
+void Gamemodel::stop()
+{
+    isstop=1;
+    emit unlock();
+    wait();
 }
 
 

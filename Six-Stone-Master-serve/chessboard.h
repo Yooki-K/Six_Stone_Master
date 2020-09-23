@@ -30,14 +30,19 @@ public:
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
     void startgame();
+    void closeflag();
 private slots:
     void on_btwhite_clicked();
     void on_btblack_clicked();
     void on_btback_clicked();
     void on_btgvup_clicked();
+    void on_btsend_clicked();
+    void updatechat(QString);
+    void on_lineEdit_returnPressed();
 
 signals:
     void mouseRelease();
+    void sendmesschat(QString);
 private:
     Ui::Chessboard *ui;
 };

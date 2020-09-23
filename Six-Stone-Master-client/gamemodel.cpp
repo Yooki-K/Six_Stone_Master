@@ -1,11 +1,8 @@
 ﻿#include "gamemodel.h"
 #include"chessboard.h"
 #include"gplayer.h"
-Gamemodel::Gamemodel(QObject *parent):QThread(parent)//parent为mainwindow
-{
+Gamemodel::Gamemodel(QObject *parent):QThread(parent){//parent为client
     state=playing;//设置游戏模式为进行中
-    c=new Chessboard((QWidget*)parent,this);//创建棋盘界面到mainwindow
-    c->show();
     //棋盘初始化
     for(int i=0;i<columnline;i++)
     {
@@ -33,24 +30,37 @@ Gamemodel::Gamemodel(QObject *parent):QThread(parent)//parent为mainwindow
             white_score[i][j]=0;
         }
     }
+    connect(this,SIGNAL(gameover()),this->parent()->parent(),SLOT(GameOver()));
 }
 
 Gamemodel::~Gamemodel()
 {
-    delete c;
-    delete player1;
-    delete player2;
+    if(c!=0)delete c;
+    if(player1!=0)delete player1;
+    if(player2!=0)delete player2;
 }
 void Gamemodel::run()
 {
-    while(1)
-    {
-                SPLAYER1
-                c->Sound_effect->play();
-                c->update();
-     }
+    while(!isstop){
+        if(player1->myflag)
+        {
+            SPLAYER1
+            c->Sound_effect->play();
+            c->update();
+            SPLAYER2
+            c->Sound_effect->play();
+            c->update();
+        }
+        else{
+            SPLAYER2
+            c->Sound_effect->play();
+            c->update();
+            SPLAYER1
+            c->Sound_effect->play();
+            c->update();
 
-
+        }
+    }
 }
 Gamestate Gamemodel::GameEnd(int x, int y)
 {
@@ -117,9 +127,16 @@ void Gamemodel::backStep(GPlayer *p)
 
 void Gamemodel::giveup(GPlayer *p)
 {
-    state=win;
-    connect(this,SIGNAL(gameoversignal(Gamestate,bool)),this->parent(),SLOT(GameOver(Gamestate,bool)));
-    emit gameoversignal(state,!p->myflag);
+//    state=win;
+//    connect(this,SIGNAL(gameoversignal()),this->parent(),SLOT(GameOver()));
+//    emit gameoversignal(state,!p->myflag);
+}
+
+void Gamemodel::stop()
+{
+    isstop=1;
+    emit unlock();
+    wait();
 }
 
 

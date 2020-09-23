@@ -20,13 +20,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    Selectform *f;
-    Gamemodel *localgame;
+    Selectform *f=nullptr;
+    Gamemodel *localgame=nullptr;
     SeverForm *sf=nullptr;
     Server *server=nullptr;
 private slots:
 
-    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -35,10 +34,9 @@ public slots:
     void receimes(Gametype t1,GameAI ai1);
     void openline();
     void updatelabel(QString);
-    void GameOver(Gamestate,bool);
-    void connectroom(QString);
-    void openroom(QString);
-    void receiprogress(QString);
+    void GameOver(int, bool);
+    void GameOver();
+    void receiveprogress(QString);
 signals:
     void isokon();
 };

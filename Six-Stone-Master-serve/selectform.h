@@ -32,7 +32,6 @@ signals:
     void sendmes(Gametype,GameAI);
     void online();
 private slots:
-    void on_ButtonOn_clicked();
 };
 
 #endif // SELECTFORM_H

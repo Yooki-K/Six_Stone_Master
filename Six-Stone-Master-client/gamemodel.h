@@ -4,16 +4,13 @@
 #include<QMessageBox>
 #include<QThread>
 #include"database.hpp"
+#include<QMainWindow>
 
-
-#define SPLAYER1 {QEventLoop loopp;\
-connect(this->parent()->parent(),SIGNAL(isokon()),&loopp,SLOT(quit()));\
-loopp.exec();\
-if(player1->aitype==none){\
-QEventLoop loop;\
+#define SPLAYER1 QEventLoop loop;\
 connect(this->c,SIGNAL(mouseRelease()),&loop,SLOT(quit()));\
+connect(this,SIGNAL(unlock()),&loop,SLOT(quit()));\
 loop.exec();\
-}\
+if(isstop) break;\
 player1->myturn(c->clickx,c->clicky);\
 QString progress="";\
 for(int i=0;i<rowline;i++){\
@@ -21,8 +18,24 @@ for(int i=0;i<rowline;i++){\
         progress+=QString::number(int(game_progress[i][j]));\
     }\
 }\
-connect(this,SIGNAL(sendprogress(QString)),this->parent()->parent(),SLOT(receiprogress(QString)));\
-emit sendprogress(progress);}
+connect(this,SIGNAL(sendprogress(QString)),this->parent()->parent(),SLOT(receiveprogress(QString)));\
+emit sendprogress(progress);\
+if(isstop) break;\
+if(state!=playing) {\
+QEventLoop loop;\
+QTimer::singleShot(1000,&loop,SLOT(quit()));\
+loop.exec();\
+emit gameover();\
+QEventLoop loopp;\
+connect(this,SIGNAL(unlock()),&loopp,SLOT(quit()));\
+loopp.exec();\
+}
+
+#define SPLAYER2 Gameflags=!Gameflags;\
+QEventLoop looppp;\
+connect(this->parent()->parent(),SIGNAL(isokon()),&looppp,SLOT(quit()));\
+connect(this,SIGNAL(unlock()),&looppp,SLOT(quit()));\
+looppp.exec();
 
 
 class GPlayer;
@@ -31,14 +44,15 @@ class Gamemodel:public QThread
 {
     Q_OBJECT
 private:
+    bool isstop=0;
 public:
-    GPlayer *player1;
-    GPlayer *player2;
+    GPlayer *player1=0;
+    GPlayer *player2=0;
     Gametype type;
     Gamestate state;
     GameAI AItype;
     //必要数据
-    Chessboard *c;
+    Chessboard *c=0;
     int winx=0;
     int winy=0;
     int backx=-1;int backy=-1;
@@ -48,7 +62,7 @@ public:
     int white_score[rowline][columnline];
     int derect=-1;
     bool isfirst=1;
-    bool isonline=0;
+    int isonline=-1;
     Gamemodel(QObject *parent=nullptr);
     ~Gamemodel();
     void run();
@@ -56,10 +70,13 @@ public:
     Gamestate GameEnd(int x,int y);
     void backStep(GPlayer *);//悔棋
     void giveup(GPlayer *);//认输
+    void stop();
 signals:
     void gameoversignal(Gamestate,bool);
     void gameonisok();//可以下棋信号
     void sendprogress(QString);//发送棋盘信息
+    void unlock();//解除锁定
+    void gameover();
 public slots:
 
 };

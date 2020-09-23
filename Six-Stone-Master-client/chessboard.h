@@ -7,6 +7,7 @@
 #include<QPainter>
 #include<QKeyEvent>
 #include<math.h>
+#include<QTime>
 #include<QMediaPlayer>
 namespace Ui {
 class Chessboard;
@@ -31,14 +32,12 @@ public:
     void mouseReleaseEvent(QMouseEvent *);
     void startgame();
 private slots:
-    void on_btwhite_clicked();
-    void on_btblack_clicked();
     void on_btback_clicked();
     void on_btgvup_clicked();
 
-    void on_lineEdit_editingFinished();
-
     void on_btsend_clicked();
+
+    void on_lineEdit_returnPressed();
 
 signals:
     void mouseRelease();

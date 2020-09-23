@@ -2,16 +2,16 @@
 #include "ui_chessboard.h"
 #include"gplayer.h"
 //#include<QDebug>
-Chessboard::Chessboard(QWidget *parent, Gamemodel *game) :
+Chessboard::Chessboard(QWidget *parent, Gamemodel *game) ://paretn为mainwindow
     QWidget(parent),game(game),
     ui(new Ui::Chessboard)
 {
     move(200,50);
     ui->setupUi(this);
-    Sound_effect = new QMediaPlayer;
+    setMouseTracking(true);
+    Sound_effect = new QMediaPlayer(this);
     Sound_effect->setMedia(QUrl("qrc:/new/background/reso/down.wav"));
     Sound_effect->setVolume(200);
-    if(game->isonline) ui->flagchoose->close();
 }
 
 
@@ -111,6 +111,7 @@ void Chessboard::mouseMoveEvent(QMouseEvent *event)
     if(  game->type==MA&&game->Gameflags!=game->player1->myflag) return;
     x=event->x();
     y=event->y();
+    if(x<margin||y<margin||x>margin+20*one||y>margin+20*one)return;
     isselected=0;
     int minx;
     int miny;
@@ -130,6 +131,7 @@ void Chessboard::mouseMoveEvent(QMouseEvent *event)
     if(clickx<0||clicky<0||clickx>20||clicky>20) return;//防止程序异常
         if(  game->game_progress[clickx][clicky]==isempty){
                 isselected=1;
+                update();
         }
     }
 
@@ -160,12 +162,24 @@ void Chessboard::on_btgvup_clicked()
     emit sendgiveup();
 }
 
-void Chessboard::on_lineEdit_editingFinished()
-{
-    emit sendmesschat(ui->lineEdit->text());
-}
+
 
 void Chessboard::on_btsend_clicked()
 {
-    emit sendmesschat(ui->lineEdit->text());
+    if(!ui->lineEdit->text().isEmpty())
+    {
+        emit sendmesschat(QTime::currentTime().toString()+' '+game->player1->name+':'+ui->lineEdit->text());
+        ui->meslist->addItem(QTime::currentTime().toString()+' '+game->player1->name+':'+ui->lineEdit->text());
+        ui->lineEdit->clear();
+    }
+}
+
+void Chessboard::on_lineEdit_returnPressed()
+{
+    if(!ui->lineEdit->text().isEmpty())
+    {
+        emit sendmesschat(QTime::currentTime().toString()+' '+game->player1->name+':'+ui->lineEdit->text());
+        ui->meslist->addItem(QTime::currentTime().toString()+' '+game->player1->name+':'+ui->lineEdit->text());
+        ui->lineEdit->clear();
+    }
 }

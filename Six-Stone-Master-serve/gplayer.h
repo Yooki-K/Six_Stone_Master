@@ -35,7 +35,8 @@ public:
 
 
 signals:
-    void gameover(Gamestate,bool);
+    void gameover(int,bool);
+
 public slots:
 
 };

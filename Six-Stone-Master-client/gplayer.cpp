@@ -6,8 +6,6 @@
 GPlayer::GPlayer(bool flag, Gamemodel *game, QObject *parent, QString name) : QObject(parent),game(game),name(name)
 {
     myflag=flag;
-    connect(this,SIGNAL(gameover(Gamestate,bool)),this->parent()->parent(),SLOT(GameOver(Gamestate,bool)));
-    connect(this, SIGNAL(gameover(Gamestate,bool)),game ,SLOT(deleteLater()));
 }
 
 GPlayer::GPlayer()
@@ -19,7 +17,7 @@ void GPlayer::myturn(int x,int y){
     game->game_progress[x][y]=(what)myflag;
     game->state=game->GameEnd(x,y);
     if(game->state==win)
-    {emit gameover(game->state,myflag);}
+    {return;}
     game->black_score[x][y]=-2000;
     game->white_score[x][y]=-2000;
     if(game->type!=MM){
@@ -34,6 +32,7 @@ void GPlayer::myturn(int x,int y){
 
  }
     game->Gameflags=!game->Gameflags;//换手
+    backx=x;backy=y;
     game->backx=x;game->backy=y;
 }
 

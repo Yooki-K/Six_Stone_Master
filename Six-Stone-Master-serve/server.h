@@ -13,6 +13,7 @@
 #include"database.hpp"
 #include"ai.h"
 #include"chessboard.h"
+#include<QMainWindow>
 #include"mysocket.h"
 const int maxcurcon=4;
 class Server : public QTcpServer
@@ -20,10 +21,9 @@ class Server : public QTcpServer
     Q_OBJECT
 private:
 public:
-    explicit Server(QObject *parent = nullptr);
+    explicit Server(QObject *parent = nullptr,QMainWindow*w=nullptr);
     quint16 serverdk;
-    Gamemodel *servergame=0;
-    GPlayer *serverplayer=0;
+    QMainWindow*w;
     MySocket *mysocket=0;
     int curconnum=0;
     QList<MySocket*>clientlist;
@@ -31,16 +31,21 @@ public:
     msg_request_struct* msg_req_struct;
     // 记录对弈双方的IP信息，若主机在等待其他玩家加入，则其对手IP地址置为“-”
     QList<QPair<QString, QString> >playerFightInfo;
+    void waits(int );
 signals:
     void senddktoui(QString);
     void sendupdateGameInfo(Server *);
-    void openroom(QString);
+    void openroom(QString,QString);
     void isokon();
     void sendupdatenum(int);
+    void updatechat(QString);
 public slots:
    void incomingConnection(qintptr);
    void sendMestoc(MySocket *, comm_request_type, QString);
-   void receiveMesfromc(MySocket *);
+   void receiveMesfromc(MySocket*,QByteArray);
+   void sendmesschat(QString);
+   void clearroom(MySocket*);
+   void clearroom(QString);
 
 };
 

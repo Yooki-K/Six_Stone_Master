@@ -12,6 +12,7 @@ public:
     MySocket*match=0;
     Gamemodel *game=0;
     GPlayer*my=0;
+    void clear(int n=0);
 };
 
 #endif // MYSOCKET_H

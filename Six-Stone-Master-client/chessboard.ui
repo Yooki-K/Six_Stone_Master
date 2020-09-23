@@ -10,56 +10,17 @@
     <height>1000</height>
    </rect>
   </property>
+  <property name="mouseTracking">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="flagchoose" native="true">
-   <property name="geometry">
-    <rect>
-     <x>460</x>
-     <y>223</y>
-     <width>600</width>
-     <height>504</height>
-    </rect>
-   </property>
-   <widget class="QPushButton" name="btwhite">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>90</y>
-      <width>141</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btblack">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>340</y>
-      <width>131</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
   <widget class="QWidget" name="widget" native="true">
    <property name="geometry">
     <rect>
      <x>1060</x>
-     <y>10</y>
+     <y>20</y>
      <width>421</width>
      <height>851</height>
     </rect>
@@ -121,6 +82,9 @@
       <width>311</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;消息不能为空&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
   </widget>
