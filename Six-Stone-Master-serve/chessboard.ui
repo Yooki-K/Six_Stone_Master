@@ -35,7 +35,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="reso.qrc">:/new/background/reso/chess.jpg</pixmap>
+     <pixmap resource="reso.qrc">:/new/myresource/reso/pix/chess.jpg</pixmap>
     </property>
    </widget>
    <widget class="QPushButton" name="btwhite">
@@ -75,44 +75,21 @@
    <property name="geometry">
     <rect>
      <x>1070</x>
-     <y>80</y>
+     <y>70</y>
      <width>431</width>
-     <height>781</height>
+     <height>851</height>
     </rect>
    </property>
-   <widget class="QPushButton" name="btback">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>720</y>
-      <width>121</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>悔棋</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btgvup">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>720</y>
-      <width>101</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>认输</string>
-    </property>
-   </widget>
+   <property name="mouseTracking">
+    <bool>true</bool>
+   </property>
    <widget class="QPushButton" name="btsend">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>620</y>
-      <width>100</width>
-      <height>41</height>
+      <x>50</x>
+      <y>440</y>
+      <width>51</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
@@ -122,19 +99,19 @@
    <widget class="QListWidget" name="meslist">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>100</y>
-      <width>311</width>
-      <height>441</height>
+      <x>50</x>
+      <y>250</y>
+      <width>361</width>
+      <height>161</height>
      </rect>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>570</y>
-      <width>311</width>
+      <x>120</x>
+      <y>440</y>
+      <width>291</width>
       <height>31</height>
      </rect>
     </property>
@@ -142,24 +119,187 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;消息不能为空&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLCDNumber" name="lcdNumber">
+   <widget class="QLCDNumber" name="player1time">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>40</y>
+      <x>60</x>
+      <y>570</y>
       <width>111</width>
       <height>41</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;color:black；</string>
+    </property>
+    <property name="smallDecimalPoint">
+     <bool>false</bool>
+    </property>
     <property name="digitCount">
-     <number>1</number>
+     <number>5</number>
     </property>
     <property name="segmentStyle">
      <enum>QLCDNumber::Flat</enum>
     </property>
     <property name="intValue" stdset="0">
-     <number>0</number>
+     <number>20</number>
     </property>
+   </widget>
+   <widget class="QLCDNumber" name="player2time">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>120</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;color:black；</string>
+    </property>
+    <property name="smallDecimalPoint">
+     <bool>false</bool>
+    </property>
+    <property name="digitCount">
+     <number>5</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+    <property name="intValue" stdset="0">
+     <number>20</number>
+    </property>
+   </widget>
+   <widget class="QWidget" name="btwidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>710</y>
+      <width>221</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <widget class="QToolButton" name="btback">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>90</y>
+       <width>66</width>
+       <height>55</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-image: url(:/new/myresource/reso/button/back.png);
+background-color:transparent;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="btgv">
+     <property name="geometry">
+      <rect>
+       <x>3</x>
+       <y>4</y>
+       <width>67</width>
+       <height>54</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-image: url(:/new/myresource/reso/button/giveup.png);
+background-color:transparent;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="btconc">
+     <property name="geometry">
+      <rect>
+       <x>98</x>
+       <y>4</y>
+       <width>62</width>
+       <height>54</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-image: url(:/new/myresource/reso/button/controlv.png);
+background-color:transparent;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="autoRepeat">
+      <bool>false</bool>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QSlider" name="setvolume">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>0</y>
+       <width>22</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="singleStep">
+      <number>0</number>
+     </property>
+     <property name="value">
+      <number>99</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="volume">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>110</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:rgb(255, 53, 3);
+font: 87 10pt &quot;Arial Black&quot;;</string>
+     </property>
+     <property name="text">
+      <string>音量：100</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="btmyset">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>30</y>
+       <width>70</width>
+       <height>59</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-image: url(:/new/myresource/reso/button/set_1.png);
+background-color:transparent;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

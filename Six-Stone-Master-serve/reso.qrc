@@ -1,7 +1,15 @@
 <RCC>
-    <qresource prefix="/new/background">
-        <file>reso/star1.gif</file>
-        <file>reso/down.wav</file>
-        <file>reso/chess.jpg</file>
+    <qresource prefix="/new/myresource">
+        <file>reso/gif/star1.gif</file>
+        <file>reso/music/down.wav</file>
+        <file>reso/pix/chess.jpg</file>
+        <file>reso/button/back.png</file>
+        <file>reso/button/controlv.png</file>
+        <file>reso/button/giveup.png</file>
+        <file>reso/button/set_1.png</file>
+        <file>reso/button/set_2.png</file>
+        <file>reso/head portrait/tx1.jpg</file>
+        <file>reso/head portrait/tx2.jpg</file>
+        <file>reso/head portrait/tx3.jpg</file>
     </qresource>
 </RCC>

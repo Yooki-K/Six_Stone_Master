@@ -19,7 +19,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void receiveMessage();
+    void receiveMessage(QByteArray);
     void receiveprogress(QString);
     void on_btconnect_clicked();
 

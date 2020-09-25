@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui network
-QT       +=multimedia
+QT       +=multimedia concurrent
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Six-Stone-Master-serve

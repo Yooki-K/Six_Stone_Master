@@ -23,6 +23,7 @@ public:
     int clickx=-1;
     int clicky=-1;
     Gamemodel *game;
+    int timeID;
 
     explicit Chessboard(QWidget *parent = 0,Gamemodel *game=0);
     ~Chessboard();
@@ -30,7 +31,7 @@ public:
     void paintEvent(QPaintEvent *);
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
-    void startgame();
+    void timerEvent(QTimerEvent *event);
 private slots:
     void on_btback_clicked();
     void on_btgvup_clicked();
@@ -44,6 +45,7 @@ signals:
     void sendmesschat(QString);
     void sendback();
     void sendgiveup();
+
 public slots:
     void receivemeschat(QString);
 private:

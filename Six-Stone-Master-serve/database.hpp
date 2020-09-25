@@ -5,6 +5,7 @@
 #include<QTimer>
 #include<QEventLoop>
 
+
 #define WIDTH 1920
 #define HEIGHT 1080
 enum Gametype{MM,MA,AA};//游戏模式,创建游戏时赋值
@@ -16,8 +17,7 @@ const int columnline=21;
 const int r=20;
 const int one=45;
 enum what{iswhite=0,isblack,isempty};
-
-
+const char headpath[3][44]={":/new/myresource/reso/head portrait/tx1.jpg",":/new/myresource/reso/head portrait/tx2.jpg",":/new/myresource/reso/head portrait/tx3.jpg"};//记录头像路径
  // 记录当前游戏状态是playingGame（正在游戏）还是readyToPlayingGame（等待对方按下准备按钮，然后开始游戏）
 enum playerStatus
 {
@@ -63,13 +63,6 @@ enum comm_request_type
     //玩家发送胜利，游戏结束
     COMM_CLIENT_WIN
 };
-// 用户程序之间交互数据包的格式
-struct msg_request_struct
-{
-    //请求类型
-    qint8 request;//qint8一种数据类型  /* 8 bit signed */
-    //数据
-    QString data;
-};
+#define MOVETOCENTER(m) m->move(WIDTH/2-m->width()/2,HEIGHT/2-m->height()/2)
 
 #endif // DATABASE_H

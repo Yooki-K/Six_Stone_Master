@@ -6,13 +6,20 @@
 GPlayer::GPlayer(bool flag, Gamemodel *game, QObject *parent, QString name) : QObject(parent),game(game),name(name)
 {
     myflag=flag;
+    ontime.setInterval(20*60*1000);
 }
 
 GPlayer::GPlayer()
 {
 }
 
-
+QString GPlayer::inttotime(int sum)
+{
+    sum/=1000;
+    int m=sum/60;
+    int s=sum%60;
+    return QString(QString("%1:%2").arg(m,2,10,QLatin1Char( '0' )).arg(s,2,10,QLatin1Char( '0' )));
+}
 void GPlayer::myturn(int x,int y){
     game->game_progress[x][y]=(what)myflag;
     game->state=game->GameEnd(x,y);

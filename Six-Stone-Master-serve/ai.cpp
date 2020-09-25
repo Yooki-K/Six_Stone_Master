@@ -3,8 +3,7 @@
 AI::AI(bool flag,  QObject *parent, Gamemodel *game, GameAI type,QString name):GPlayer(flag,game,parent,name)
 {
     aitype=type;
-    connect(this,SIGNAL(gameover(Gamestate,bool)),this->parent()->parent(),SLOT(GameOver(Gamestate,bool)));
-    connect(this, SIGNAL(gameover(Gamestate,bool)),game ,SLOT(deleteLater()));
+    connect(this,SIGNAL(gameover(int,bool)),this->parent()->parent(),SLOT(GameOver(int,bool)));
 }
 
 void AI::myturn(int x, int y)

@@ -29,14 +29,15 @@ emit gameover();\
 QEventLoop loopp;\
 connect(this,SIGNAL(unlock()),&loopp,SLOT(quit()));\
 loopp.exec();\
-}
+}\
+emit stopt();
 
 #define SPLAYER2 Gameflags=!Gameflags;\
 QEventLoop looppp;\
 connect(this->parent()->parent(),SIGNAL(isokon()),&looppp,SLOT(quit()));\
 connect(this,SIGNAL(unlock()),&looppp,SLOT(quit()));\
-looppp.exec();
-
+looppp.exec();\
+emit startt();
 
 class GPlayer;
 class Chessboard;
@@ -71,12 +72,15 @@ public:
     void backStep(GPlayer *);//悔棋
     void giveup(GPlayer *);//认输
     void stop();
+
 signals:
     void gameoversignal(Gamestate,bool);
     void gameonisok();//可以下棋信号
     void sendprogress(QString);//发送棋盘信息
     void unlock();//解除锁定
     void gameover();
+    void stopt();
+    void startt();
 public slots:
 
 };

@@ -10,8 +10,9 @@ Chessboard::Chessboard(QWidget *parent, Gamemodel *game) ://paretn为mainwindow
     ui->setupUi(this);
     setMouseTracking(true);
     Sound_effect = new QMediaPlayer(this);
-    Sound_effect->setMedia(QUrl("qrc:/new/background/reso/down.wav"));
+    Sound_effect->setMedia(QUrl("qrc:/reso/music/down.wav"));
     Sound_effect->setVolume(200);
+    timeID=startTimer(1000);
 }
 
 
@@ -20,7 +21,20 @@ Chessboard::~Chessboard()
     delete ui;
 }
 
-
+void Chessboard::timerEvent(QTimerEvent *event)
+{
+    if(game->player1==0) return;
+    if(event->timerId()==timeID)
+    {
+        QString t;
+        if(game->player1->ontime.remainingTime()==0)return;
+        if(game->player1->ontime.remainingTime()>0)
+            t=game->player1->inttotime(game->player1->ontime.remainingTime());
+        else
+            t=game->player1->inttotime(game->player1->ontime.interval());
+        ui->player1time->display(t);
+    }
+}
 void Chessboard::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
@@ -106,13 +120,13 @@ void Chessboard::paintEvent(QPaintEvent *)
 
 void Chessboard::mouseMoveEvent(QMouseEvent *event)
 {
+    isselected=0;
     if(  game->state!=playing) return;
     if(  game->type==AA)return;
     if(  game->type==MA&&game->Gameflags!=game->player1->myflag) return;
     x=event->x();
     y=event->y();
     if(x<margin||y<margin||x>margin+20*one||y>margin+20*one)return;
-    isselected=0;
     int minx;
     int miny;
     if((x-margin)%one>one-((x-margin)%one)){

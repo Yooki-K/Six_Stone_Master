@@ -9,22 +9,31 @@ Chessboard::Chessboard(QWidget *parent, Gamemodel *game) :
     move(200,50);
     ui->setupUi(this);
     if(parent==0){
-        ui->widget->move(WIDTH-ui->widget->width()-100,HEIGHT/2-ui->widget->height()/2);
+        ui->widget->move(WIDTH-ui->widget->width()-200,HEIGHT/2-ui->widget->height()/2);
     }
-    if(!hasMouseTracking())
+    ui->btback->hide();
+    ui->btconc->hide();
+    ui->btgv->hide();
+    ui->setvolume->hide();
+    ui->volume->hide();
+    if(game->isonline==0)
     setMouseTracking(true);
+    ui->btmyset->installEventFilter(this);  //在窗体上为btmyset安装过滤器
+    ui->setvolume->installEventFilter(this);
     Sound_effect = new QMediaPlayer(this);
-    Sound_effect->setMedia(QUrl("qrc:/new/background/reso/down.wav"));
-    Sound_effect->setVolume(200);
+    Sound_effect->setMedia(QUrl("qrc:/new/myresource/reso/music/down.wav"));
+    Sound_effect->setVolume(100);
     if(game->isonline!=-1)
     {
         ui->flagchoose->close();
+        ui->player2time->close();
     }
     else{
         ui->meslist->close();
         ui->btsend->close();
         ui->lineEdit->close();
     }
+    timeID=startTimer(1000);
 }
 
 
@@ -200,13 +209,20 @@ void Chessboard::paintEvent(QPaintEvent *)
 
 void Chessboard::mouseMoveEvent(QMouseEvent *event)
 {
+    isselected=0;
     if(  game->state!=playing) return;
     if(  game->type==AA)return;
     if(  game->type==MA&&game->Gameflags!=game->player1->myflag) return;
-    x=event->x();
-    y=event->y();
-    if(x<margin||y<margin||x>margin+20*one||y>margin+20*one)return;
-    isselected=0;
+    if(parent()==0)
+    {
+        x=event->x()-200;
+        y=event->y()-50;
+    }
+    else{
+        x=event->x();
+        y=event->y();
+    }
+    if(x<margin||y<margin||x>margin+20*one||y>margin+20*one)return; 
     int minx;
     int miny;
     if((x-margin)%one>one-((x-margin)%one)){
@@ -244,6 +260,69 @@ void Chessboard::mouseReleaseEvent(QMouseEvent *)
 void Chessboard::closeflag()
 {
     ui->flagchoose->close();
+}
+
+void Chessboard::timerEvent(QTimerEvent *event)
+{
+    if(game->player1==0) return;
+    if(event->timerId()==timeID)
+    {
+        QString t,tt;
+        if(game->isonline==0)
+        {
+
+            if(game->player1->ontime.remainingTime()>0)
+                t=game->player1->inttotime(game->player1->ontime.remainingTime());
+            else
+                t=game->player1->inttotime(game->player1->ontime.interval());
+            ui->player1time->display(t);
+        }
+        else{
+            if(game->player2==0) return;
+            int ttime1=game->player1->ontime.remainingTime();
+            int ttime2=game->player2->ontime.remainingTime();
+            if(ttime1==0||ttime2==0) return;
+            if(ttime1>0)
+                t=game->player1->inttotime(ttime1);
+            else
+                t=game->player1->inttotime(game->player1->ontime.interval());
+            ui->player1time->display(t);
+            if(ttime2>0)
+                tt=game->player2->inttotime(ttime2);
+            else
+                tt=game->player2->inttotime(game->player2->ontime.interval());
+            ui->player2time->display(tt);
+        }
+    }
+}
+
+bool Chessboard::eventFilter(QObject *watched, QEvent *event)
+{
+   if (watched==ui->btmyset)
+   {
+        if (event->type()==QEvent::Enter)     //然后再判断控件的具体事件 (这里指鼠标进入事件)
+        {
+          ui->btmyset->setStyleSheet("background-image: url(:/new/myresource/reso/button/set_1.png);background-color:transparent;");
+          if(ui->flagchoose->isHidden())
+              ui->btmyset->setEnabled(1);
+          else
+              ui->btmyset->setEnabled(0);
+        }
+        else if (event->type()==QEvent::Leave)    // 这里指鼠标离开事件
+        {
+           ui->btmyset->setStyleSheet("background-image: url(:/new/myresource/reso/button/set_2.png);background-color:transparent;");
+         }
+   }
+   if(watched==ui->setvolume){
+       if(event->type()==QEvent::Enter){
+           ui->volume->show();
+       }
+       else if(event->type()==QEvent::Leave)
+       {
+           ui->volume->hide();
+       }
+   }
+   return 0;
 }
 
 
@@ -285,25 +364,39 @@ void Chessboard::on_btblack_clicked()
         }
     }
     setMouseTracking(true);//开启鼠标监听
+
     ui->flagchoose->close();
     game->start();
 }
 
 void Chessboard::on_btback_clicked()
 {
-    if(game->Gameflags==game->player1->myflag)
-        game->backStep(game->player1);
-    else
-        game->backStep(game->player2);
+    if(game->isonline==-1)
+    {
+        if(game->Gameflags==game->player1->myflag)
+            game->backStep(game->player1);
+        else
+            game->backStep(game->player2);
+    }
+    else{
+        emit game->sendback();
+    }
 }
 
 
-void Chessboard::on_btgvup_clicked()
+void Chessboard::on_btgv_clicked()
 {
-    if(game->Gameflags==game->player1->myflag)
-        game->giveup(game->player1);
-    else
-        game->giveup(game->player2);
+    if(game->isonline==-1)
+    {
+        if(game->Gameflags==game->player1->myflag)
+            game->giveup(game->player1);
+        else
+            game->giveup(game->player2);
+    }
+    else{
+        emit game->sendgv();
+    }
+
 }
 
 void Chessboard::on_btsend_clicked()
@@ -330,4 +423,37 @@ void Chessboard::on_lineEdit_returnPressed()
         ui->meslist->addItem(QTime::currentTime().toString()+' '+game->player1->name+':'+ui->lineEdit->text());
         ui->lineEdit->clear();
     }
+}
+
+
+void Chessboard::on_btmyset_clicked()
+{
+    if(ui->btback->isHidden())
+    {
+        ui->btback->show();
+        ui->btconc->show();
+        ui->btgv->show();
+    }
+    else{
+        ui->btback->hide();
+        ui->btconc->hide();
+        ui->btgv->hide();
+        if(!ui->setvolume->isHidden())
+            ui->setvolume->hide();
+    }
+}
+
+
+void Chessboard::on_setvolume_valueChanged(int value)
+{
+    ui->volume->setText("音量："+QString::number(value));
+    Sound_effect->setVolume(value);
+}
+
+void Chessboard::on_btconc_clicked()
+{
+    if(ui->setvolume->isHidden())
+        ui->setvolume->show();
+    else
+        ui->setvolume->hide();
 }

@@ -2,6 +2,7 @@
 #define DATABASE_H
 #include<QString>
 #include<QTimer>
+#include<QTime>
 #include<QEventLoop>
 #include<QMessageBox>
 
@@ -17,6 +18,7 @@ const int columnline=21;
 const int r=20;
 const int one=45;
 enum what{iswhite=0,isblack,isempty};
+QStringList headpath(":/reso/head portrait/tx1.jpg",":/reso/head portrait/tx2.jpg",":/reso/head portrait/tx3.jpg");//记录头像路径
 
 
 
@@ -59,13 +61,5 @@ enum comm_request_type
     //玩家发送胜利，游戏结束
     COMM_CLIENT_WIN
 };
-// 用户程序之间交互数据包的格式
-struct msg_request_struct
-{
-    //请求类型
-    qint8 request;//qint8一种数据类型  /* 8 bit signed */
-    //数据
-    QString data;
-};
-
+#define MOVETOCENTER(m) m->move(WIDTH/2-m->width()/2,HEIGHT/2-m->height()/2)
 #endif // DATABASE_H

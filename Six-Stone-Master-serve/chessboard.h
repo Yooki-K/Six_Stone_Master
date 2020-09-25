@@ -7,6 +7,7 @@
 #include<QPainter>
 #include<QKeyEvent>
 #include<math.h>
+#include<QTime>
 #include<QMediaPlayer>
 namespace Ui {
 class Chessboard;
@@ -21,7 +22,8 @@ public:
     int y=-1.0;
     int clickx=-1;
     int clicky=-1;
-    Gamemodel *game;
+    Gamemodel *game=0;
+    int timeID;
 
     explicit Chessboard(QWidget *parent = 0,Gamemodel *game=0);
     ~Chessboard();
@@ -29,20 +31,26 @@ public:
     void paintEvent(QPaintEvent *);
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
-    void startgame();
     void closeflag();
+    void timerEvent(QTimerEvent *);
+    bool eventFilter(QObject *, QEvent *);
 private slots:
     void on_btwhite_clicked();
     void on_btblack_clicked();
     void on_btback_clicked();
-    void on_btgvup_clicked();
+    void on_btgv_clicked();
     void on_btsend_clicked();
     void updatechat(QString);
     void on_lineEdit_returnPressed();
+    void on_btmyset_clicked();
+    void on_setvolume_valueChanged(int value);
+
+    void on_btconc_clicked();
 
 signals:
     void mouseRelease();
     void sendmesschat(QString);
+
 private:
     Ui::Chessboard *ui;
 };

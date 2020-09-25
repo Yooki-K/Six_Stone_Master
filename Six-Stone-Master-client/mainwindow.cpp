@@ -6,26 +6,27 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->stackedWidget->move(WIDTH/2-ui->stackedWidget->width()/2,HEIGHT/2-ui->stackedWidget->height()/2);
+    MOVETOCENTER(ui->stackedWidget);
     ui->stackedWidget->setCurrentIndex(0);
     QHostInfo info = QHostInfo::fromName(QHostInfo::localHostName());
-    ip=info.addresses().last().toString();
-
+    ip=info.addresses().last().toString();//获取本地ip
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    if(client!=0){
+        delete client;
+    }
 }
 
 
 
 
-void MainWindow::receiveMessage()
+void MainWindow::receiveMessage(QByteArray arr)
 {
-    if(client->socket->bytesAvailable()>0){//client->socket的有效字节
-       QByteArray arr=client->socket->read(client->socket->bytesAvailable());
-        int i=QString(arr.data()).section("##",0,0).toInt();
+        QString ss=QString(arr.data());
+        int i=ss.section("##",0,0).toInt();
         QString s=QString(arr.data()).section("##",1,1);
         switch (i) {
         case 0://连接服务器失败
@@ -68,10 +69,15 @@ void MainWindow::receiveMessage()
                 if(client->game->backx==-1&&client->game->backy==-1)
                     QMessageBox::information(NULL,"请求失败","当前情况不能请求悔棋");
                 else
-                    client->sendMessagetos(COMM_CLIENT_UNDO,"对方请求悔棋");
+                    client->sendMessagetos(COMM_CLIENT_UNDO,"对方请求悔棋##"+QString::number(client->game->backx)+"##"+QString::number(client->game->backy));
             });
             connect(client->game->c,&Chessboard::sendgiveup,client,[&](){
                 client->sendMessagetos(COMM_CLIENT_LOSE,"对方认输");
+                client->game->stop();
+                delete client->game;
+                client->game=0;
+                ui->stackedWidget->show();
+                ui->stackedWidget->setCurrentIndex(1);
             });
             client->game->start();
 
@@ -131,14 +137,12 @@ void MainWindow::receiveMessage()
             QMessageBox::information(NULL,"请求失败",s);
             break;
         case 13://玩家游戏操作：认输
-        {
             QMessageBox::information(NULL,"游戏结束",s);
-            client->game->c->close();//关闭页面
-            delete client->game->c;//释放棋牌
-            client->game->deleteLater();//释放游戏游戏进程
+            client->game->stop();
+            delete client->game;
+            client->game=0;
             ui->stackedWidget->show();
             ui->stackedWidget->setCurrentIndex(1);
-        }
             break;
         case 15://玩家游戏操作：发送聊天信息
             emit receivemeschat(s);
@@ -146,9 +150,6 @@ void MainWindow::receiveMessage()
         default:
             break;
         }
-
-    }
-
 }
 
 void MainWindow::receiveprogress(QString progress)

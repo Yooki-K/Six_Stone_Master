@@ -9,10 +9,11 @@ class MySocket:public QTcpSocket
     Q_OBJECT
 public:
     explicit MySocket(QObject *parent =nullptr);
-    MySocket*match=0;
-    Gamemodel *game=0;
-    GPlayer*my=0;
     void clear(int n=0);
+    bool isrun=1;
+public slots:
+signals:
+    void send(QByteArray);
 };
 
 #endif // MYSOCKET_H

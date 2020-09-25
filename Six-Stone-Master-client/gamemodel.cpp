@@ -31,6 +31,7 @@ Gamemodel::Gamemodel(QObject *parent):QThread(parent){//parent为client
         }
     }
     connect(this,SIGNAL(gameover()),this->parent()->parent(),SLOT(GameOver()));
+
 }
 
 Gamemodel::~Gamemodel()
@@ -41,6 +42,19 @@ Gamemodel::~Gamemodel()
 }
 void Gamemodel::run()
 {
+    connect(this,&Gamemodel::startt,this,[&](){
+        player1->ontime.start();
+    },Qt::QueuedConnection);
+    connect(this,&Gamemodel::stopt,this,[&](){
+
+            int remain=player1->ontime.remainingTime();
+            if(remain!=-1)
+            {
+                player1->ontime.stop();
+                player1->ontime.setInterval(remain);
+            }
+    },Qt::QueuedConnection);
+    if(player1->myflag) emit startt();
     while(!isstop){
         if(player1->myflag)
         {

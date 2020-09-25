@@ -24,8 +24,7 @@ private slots:
     void on_playerroom_itemDoubleClicked(QListWidgetItem *item);
 
 public slots:
-    void on_btopenroom_clicked(QString ip="127.0.0.1", QString text="开房");
-
+    void btopenclicked(QString ip="127.0.0.1", QString text="开房");
     void updatenum(int);
 signals:
     void closesever();

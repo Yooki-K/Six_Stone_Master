@@ -2,7 +2,6 @@
 
 Server::Server(QObject *parent,QMainWindow*w) : QTcpServer(parent),w(w)
 {
-    connect(this,SIGNAL(senddktoui(QString)),this->parent()->parent(),SLOT(updatelabel(QString)));
     QTime time= QTime::currentTime();
     qsrand(time.msec()+time.second()*3000);
     while (1) {
@@ -17,7 +16,6 @@ Server::Server(QObject *parent,QMainWindow*w) : QTcpServer(parent),w(w)
             break;
         }
     }
-    connect(this,SIGNAL(sendupdateGameInfo(Server*)),this->parent(),SLOT(updateroom(Server*)),Qt::DirectConnection);//修改游戏大厅
     connect(this,&Server::sendupdateGameInfo,this,[&](){//向每个连接客户端发送最新游戏大厅数据
         QList<MySocket* > allTcpSocket = findChildren<MySocket *>();
         QString data=QString::number(playerFightInfo.size());
@@ -27,7 +25,7 @@ Server::Server(QObject *parent,QMainWindow*w) : QTcpServer(parent),w(w)
         {
         sendMestoc(allTcpSocket.at(i),COMM_SERVER_GAMEINFO, data);
         }
-    },Qt::DirectConnection);
+    });
 }
 
 void Server::waits(int s)
@@ -55,13 +53,14 @@ void Server::incomingConnection(qintptr socketDescriptor)
     }//连接不能超过最大数
     socket->setSocketDescriptor(socketDescriptor);//建立连接
     connect(socket,&MySocket::disconnected,this,[&](){
+        if(isaccord) return;
         curconnum--;
        emit sendupdatenum(curconnum);
         int n=clientlist.size();
         for(int i=0; i<n;i++) {
             if(clientlist[i]->write("-1")==-1){
                 if(clientlist.at(i)->match!=mysocket)
-                    sendMestoc( clientlist.at(i)->match,COMM_CLIENT_QUITGAME,"");
+                    sendMestoc( clientlist.at(i)->match,COMM_CLIENT_QUITGAME,"对方退出游戏");
                 else
                 {
                     if(clientlist.at(i)->game!=0)
@@ -73,18 +72,13 @@ void Server::incomingConnection(qintptr socketDescriptor)
                         clientlist.at(i)->match->game->stop();
                         delete clientlist.at(i)->match->game;
                         clientlist.at(i)->match->game=0;
-                        int index=playerFightInfo.indexOf(QPair<QString,QString>(clientlist.at(i)->ip,clientlist.at(i)->match->ip));
-                        if(index==-1)
-                            playerFightInfo.removeOne(QPair<QString,QString>(clientlist.at(i)->match->ip,clientlist.at(i)->ip));
-                        else
-                            playerFightInfo.removeAt(index);
+                        clearroom(clientlist.at(i));
                         if(clientlist.at(i)->match==mysocket)
                         {
                             delete mysocket;
                             mysocket=0;
                         }
                         clientlist.at(i)->clear(1);
-                        emit sendupdateGameInfo(this);
                     }
 
                 }
@@ -94,18 +88,32 @@ void Server::incomingConnection(qintptr socketDescriptor)
     });//断开连接,当前连接数减一
     clientlist.append(socket);
     connect(socket,&MySocket::readyRead,socket,&MySocket::receiveMesfromc);
-    connect(socket,SIGNAL(send(MySocket*,QByteArray)),this,SLOT(receiveMesfromc(MySocket*,QByteArray)));
+    connect(socket,SIGNAL(send(MySocket*,QByteArray)),this,SLOT(receiveMesfromc(MySocket*,QByteArray)),Qt::QueuedConnection);
     sendMestoc(socket,COMM_SERVER_CONN_SUCCESSFUL,"服务器:"+socket->peerAddress().toString()+"连接成功");
     emit sendupdatenum(curconnum);
-    waits(1500);
+    waits(1000);
     emit sendupdateGameInfo(this);
 }
 
 
 void Server::sendMestoc(MySocket*socket,comm_request_type ty, QString toc)
 {
-    toc.prepend(QString::number(int(ty))+"##");
-    socket->write(toc.toUtf8(),toc.toUtf8().length()+1);
+    if(sendtimelast.isNull())
+    {
+        sendtimelast=QTime::currentTime();
+    }
+    else
+    {
+        int cha=sendtimelast.msecsTo(QTime::currentTime());
+        if(cha<1000)
+        {
+            waits(1000-cha+100);
+        }
+    }
+            toc.prepend(QString::number(int(ty))+"##");
+            socket->write(toc.toUtf8(),toc.toUtf8().length()+1);
+            sendtimelast=QTime::currentTime();
+
 }
 
 void Server::receiveMesfromc(MySocket *socket,QByteArray arr)
@@ -128,11 +136,21 @@ void Server::receiveMesfromc(MySocket *socket,QByteArray arr)
                     playerFightInfo[index].second=QString(arr.data()).section("##",2,2);
                     emit sendupdateGameInfo(this);
                     if(s==mysocket->ip){
-                        mysocket->game=new Gamemodel(w,0);//在主窗口中建立线程游戏
+                        mysocket->game=new Gamemodel(this,0);//在主窗口中建立线程游戏
                         mysocket->game->type=MM;
                         connect(mysocket->game->c,SIGNAL(sendmesschat(QString)),this,SLOT(sendmesschat(QString)));
                         connect(this,SIGNAL(updatechat(QString)),mysocket->game->c,SLOT(updatechat(QString)));
-
+                        connect(mysocket->game,&Gamemodel::sendback,this,[&](){
+                            sendMestoc(mysocket->match,COMM_CLIENT_UNDO,"对方请求悔棋，是否同意");
+                        });
+                        connect(mysocket->game,&Gamemodel::sendgv,this,[&](){
+                            clearroom(mysocket);
+                            sendMestoc(mysocket->match,COMM_CLIENT_LOSE,"对方认输，你赢了");
+                            mysocket->match->clear();
+                            mysocket->clear(1);
+                            delete mysocket;
+                            mysocket=0;
+                        });
                         mysocket->game->AItype=none;
                         //bool,Gamemodel *game=0, QObject *parent=0 ,  QString name="Player"
                         mysocket->game->player1=new GPlayer(1,mysocket->game,mysocket->game,s);
@@ -140,9 +158,9 @@ void Server::receiveMesfromc(MySocket *socket,QByteArray arr)
                         socket->game=mysocket->game;
                         mysocket->match=socket;
                         socket->match=mysocket;
+                        mysocket->my=mysocket->game->player1;
                         socket->my=mysocket->game->player2;
                         mysocket->game->start();
-                        waits(1000);
                         sendMestoc(socket,COMM_SERVER_GAMESTART,"");
                     }//加入服务器房间
                     else
@@ -152,7 +170,7 @@ void Server::receiveMesfromc(MySocket *socket,QByteArray arr)
                                 clientlist.at(j)->match=socket;
                                 socket->match=clientlist.at(j);//建立客户端之间的匹配连接
                         }
-                        Gamemodel *game=new Gamemodel(w,1);//在主窗口中建立线程游戏
+                        Gamemodel *game=new Gamemodel(this,1);//在主窗口中建立线程游戏
                         game->type=MM;
                         game->AItype=none;
                         //bool,Gamemodel *game=0, QObject *parent=0 ,  QString name="Player"
@@ -188,23 +206,39 @@ void Server::receiveMesfromc(MySocket *socket,QByteArray arr)
                 }
                 if(socket->game->c!=0) {
                     socket->game->c->update();
-//                    waits(500);
                     emit isokon();
                 }
                 else sendMestoc(socket->match,COMM_CLIENT_GAMEOP,QString(arr.data()));//发送新棋盘消息给对家
 
                 return;
             case 10://玩家游戏操作：悔棋
-                if(mysocket==socket->match)
+            {
+                QString bx=QString(arr.data()).section("##",2,2);
+                QString by=QString(arr.data()).section("##",3,3);
+                socket->my->backx=bx.toInt();
+                socket->my->backy=by.toInt();//获得上一步落子坐标
+                if(socket->match==mysocket)
                 {
                     QMessageBox:: StandardButton result= QMessageBox::information(NULL,"对方发来信息","对方请求悔棋",QMessageBox::Yes|QMessageBox::No);
                     if(result==QMessageBox::Yes)
-                        sendMestoc(socket,COMM_CLIENT_UNDO_YES,"");
+                    {
+                        sendMestoc(socket,COMM_CLIENT_UNDO_YES,"对方同意你的悔棋请求");
+                        mysocket->game->backStep(socket->my);
+                        QString progress="";
+                        for(int i=0;i<rowline;i++){
+                            for(int j=0;j<columnline;j++){
+                                progress+=QString::number(int(mysocket->game->game_progress[i][j]));
+                            }
+                        }
+                        sendMestoc(socket,COMM_CLIENT_GAMEOP,progress);
+
+                    }
                     else
-                        sendMestoc(socket,COMM_CLIENT_UNDO_NO,"");
+                        sendMestoc(socket,COMM_CLIENT_UNDO_NO,"对方拒绝了你的悔棋请求,请继续游戏");
                 }
                 else
-                      sendMestoc(socket->match,COMM_CLIENT_UNDO,"对方请求悔棋，是否同意");
+                    sendMestoc(socket->match,COMM_CLIENT_UNDO,"对方请求悔棋，是否同意");
+            }
                 return;
             case 11://玩家游戏操作：悔棋回复yes
             {
@@ -223,7 +257,6 @@ void Server::receiveMesfromc(MySocket *socket,QByteArray arr)
                         progress+=QString::number(int(socket->game->game_progress[i][j]));
                     }
                 }
-                waits(1000);
                 sendMestoc(socket,COMM_CLIENT_GAMEOP,progress);
                 if(mysocket!=socket->match)
                     sendMestoc(socket->match,COMM_CLIENT_GAMEOP,progress);
@@ -236,7 +269,11 @@ void Server::receiveMesfromc(MySocket *socket,QByteArray arr)
                     sendMestoc(socket->match,COMM_CLIENT_UNDO_NO,"对方拒绝了你的悔棋请求,请继续游戏");
                 return;
             case 13://玩家游戏操作：认输
-                sendMestoc(socket->match,COMM_CLIENT_LOSE,"对方认输，你赢了");
+                clearroom(socket);
+                if(socket->match==mysocket)
+                    QMessageBox::information(NULL,"游戏结束","对方认输，你赢了");
+                else
+                    sendMestoc(socket->match,COMM_CLIENT_LOSE,"对方认输，你赢了");
                 socket->match->clear();
                 if(socket->match==mysocket)
                 {
@@ -256,7 +293,6 @@ void Server::receiveMesfromc(MySocket *socket,QByteArray arr)
                 return;
             case 16://玩家发送胜利，游戏结束
                 clearroom(socket);
-                waits(1000);
                 sendMestoc(socket,COMM_SERVER_GAMEOVER,s);
                 if(socket->match==mysocket)
                 {
@@ -293,6 +329,8 @@ void Server::clearroom(MySocket *x1)
         int i=playerFightInfo.indexOf(QPair<QString,QString>(x1->match->ip,x1->ip));
         if(i!=-1)
             playerFightInfo.removeAt(i);
+        else
+            return;
     }
     emit sendupdateGameInfo(this);
 }
@@ -301,6 +339,32 @@ void Server::clearroom(QString ip)
 {
     int index=playerFightInfo.indexOf(QPair<QString,QString>(ip,"-"));
     if(index!=-1)
+    {
         playerFightInfo.removeAt(index);
-    emit sendupdateGameInfo(this);
+        emit sendupdateGameInfo(this);
+    }
+}
+
+void Server::GameOver()
+{
+    clearroom(mysocket);
+    if(mysocket->game->state==win)
+    {
+        sendMestoc(mysocket->match,COMM_SERVER_GAMEOVER,mysocket->game->player1->name+"胜利##"+QString::number(mysocket->game->backx)+"//"+QString::number(mysocket->game->backy));
+        QMessageBox::information(NULL,"游戏结束",mysocket->game->player1->name+"胜利");
+    }
+    else
+        {
+            sendMestoc(mysocket->match,COMM_SERVER_GAMEOVER,"双方和棋##"+QString::number(mysocket->game->backx)+"//"+QString::number(mysocket->game->backy));
+            QMessageBox::information(NULL,"游戏结束","双方和棋");
+        }
+    mysocket->match->clear();
+    mysocket->clear(1);
+    delete mysocket;
+    mysocket=0;
+    //清空玩家双方套接字，不断开连接
+}
+void Server::receiveprogress(QString p)
+{
+    sendMestoc(mysocket->match,COMM_CLIENT_GAMEOP,p);
 }

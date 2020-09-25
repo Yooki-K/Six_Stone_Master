@@ -15,23 +15,27 @@
 #include"chessboard.h"
 #include<QMainWindow>
 #include"mysocket.h"
-const int maxcurcon=4;
+#define IP "127.0.0.1"
+
+const int maxcurcon=2;
 class Server : public QTcpServer
 {
     Q_OBJECT
 private:
+
 public:
     explicit Server(QObject *parent = nullptr,QMainWindow*w=nullptr);
     quint16 serverdk;
+    bool isaccord=0;//查看是否是服务器主动断开
     QMainWindow*w;
     MySocket *mysocket=0;
     int curconnum=0;
     QList<MySocket*>clientlist;
-    // 用户程序之间交互的数据结构
-    msg_request_struct* msg_req_struct;
+    QTime sendtimelast;
     // 记录对弈双方的IP信息，若主机在等待其他玩家加入，则其对手IP地址置为“-”
     QList<QPair<QString, QString> >playerFightInfo;
     void waits(int );
+
 signals:
     void senddktoui(QString);
     void sendupdateGameInfo(Server *);
@@ -46,7 +50,8 @@ public slots:
    void sendmesschat(QString);
    void clearroom(MySocket*);
    void clearroom(QString);
-
+   void GameOver();
+   void receiveprogress(QString);
 };
 
 #endif // SERVER_H

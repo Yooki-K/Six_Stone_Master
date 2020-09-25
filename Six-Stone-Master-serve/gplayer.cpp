@@ -6,7 +6,17 @@
 GPlayer::GPlayer(bool flag, Gamemodel *game, QObject *parent, QString name) : QObject(parent),game(game),name(name)
 {
     myflag=flag;
-    connect(this,SIGNAL(gameover(int,bool)),this->parent()->parent(),SLOT(GameOver(int,bool)));
+    ontime.setInterval(1000*20*60);
+    if(game->isonline==-1)
+    {
+        connect(this,SIGNAL(gameover(int,bool)),this->parent()->parent(),SLOT(GameOver(int,bool)));
+        connect(&ontime,&QTimer::timeout,this,[&](){
+            emit gameover(int(win),!myflag);
+        });
+    }
+    connect(&ontime,&QTimer::timeout,this,[&](){
+        emit game->gameover();
+    });
 }
 
 GPlayer::GPlayer()
@@ -36,6 +46,14 @@ void GPlayer::myturn(int x,int y){
     game->Gameflags=!game->Gameflags;//换手
     backx=x;backy=y;
     game->backx=x;game->backy=y;
+}
+
+QString GPlayer::inttotime(int sum)
+{
+    sum/=1000;
+    int m=sum/60;
+    int s=sum%60;
+    return QString(QString("%1:%2").arg(m,2,10,QLatin1Char( '0' )).arg(s,2,10,QLatin1Char( '0' )));
 }
 
 void GPlayer::calculatBlack(int fx, int fy)

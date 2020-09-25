@@ -27,6 +27,6 @@ void MySocket::clear(int n)// 0 all// 1 some
 
 void MySocket::receiveMesfromc()
 {
-    if(this->bytesAvailable()>0)//client->socket的有效字节
-    emit send(this,this->readAll());
+        if(this->bytesAvailable()>0)//client->socket的有效字节
+        emit send(this,this->readAll());
 }

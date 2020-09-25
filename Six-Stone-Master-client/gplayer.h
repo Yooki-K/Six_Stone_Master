@@ -2,6 +2,7 @@
 #define GPLAYER_H
 #include"database.hpp"
 #include <QObject>
+#include<QTimer>
 #include "gamemodel.h"
 class Gamemodel;
 struct maxscore
@@ -18,7 +19,7 @@ private:
 
 public:
     bool myflag;GameAI aitype=none;int backx=0;int backy=0;
-    Gamemodel *game;QString name;
+    Gamemodel *game;QString name;QTimer ontime;
 
     explicit GPlayer(bool,Gamemodel *game=0, QObject *parent=0 ,  QString name="Player");
     GPlayer();
@@ -32,7 +33,7 @@ public:
     void calculatWhiteUp(int x,int y);
     void calculatBlackUp(int fx, int fy);//算法为AI专有
     virtual void myturn( int x, int y);
-
+    QString inttotime(int);
 
 signals:
 

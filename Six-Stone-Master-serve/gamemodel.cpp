@@ -1,7 +1,7 @@
 ﻿#include "gamemodel.h"
 #include"chessboard.h"
 #include"ai.h"
-Gamemodel::Gamemodel(QObject *parent,int n):QThread(parent),isonline(n)//parent为mainwindow
+Gamemodel::Gamemodel(QObject *parent,int n):QThread(parent),isonline(n)//parent为mainwindow或server
 {
     state=playing;//设置游戏模式为进行中
     if(isonline==0)
@@ -10,7 +10,7 @@ Gamemodel::Gamemodel(QObject *parent,int n):QThread(parent),isonline(n)//parent�
         c->closeflag();//关闭黑白选择页面
         c->setWindowTitle("六子棋");
         c->showMaximized();
-
+        connect(this,SIGNAL(gameover()),this->parent(),SLOT(GameOver()));
     }
     //棋盘初始化
     for(int i=0;i<columnline;i++)
@@ -39,7 +39,7 @@ Gamemodel::Gamemodel(QObject *parent,int n):QThread(parent),isonline(n)//parent�
             white_score[i][j]=0;
         }
     }
-    connect(this,SIGNAL(gameover()),this->parent(),SLOT(GameOver()));
+
 }
 
 Gamemodel::~Gamemodel()
@@ -50,6 +50,39 @@ Gamemodel::~Gamemodel()
 }
 void Gamemodel::run()
 {
+    connect(this,&Gamemodel::startt,this,[&](int n){
+        if(n==1)
+            player1->ontime.start();
+        else
+            player2->ontime.start();
+    },Qt::QueuedConnection);
+    connect(this,&Gamemodel::stopt,this,[&](int n){
+        int remain;
+        if(n==2){
+            remain=player2->ontime.remainingTime();
+            if(remain!=-1)
+            {
+                player2->ontime.stop();
+                player2->ontime.setInterval(remain);
+            }
+            player1->ontime.start();
+            return;
+        }
+        if(n==1){
+            remain=player1->ontime.remainingTime();
+            if(remain!=-1)
+            {
+                player1->ontime.stop();
+                player1->ontime.setInterval(remain);
+            }
+            player2->ontime.start();
+            return;
+        }
+    },Qt::QueuedConnection);
+    if(player1->myflag)
+        emit startt(1);
+    if(isonline==-1&&player2->myflag)
+        emit startt(2);
     while(!isstop){
         if(isonline==-1)
         {
@@ -145,14 +178,20 @@ void Gamemodel::backStep(GPlayer *p)
         QMessageBox::information(NULL,"请求失败","当前情况不能请求悔棋");
         return;
     }
-    if(backx==p->backx&&backy==p->backy)
+    if(isonline==-1)
     {
-        game_progress[p->backx][p->backy]=isempty;
+        if(backx==p->backx&&backy==p->backy)
+        {
+            game_progress[p->backx][p->backy]=isempty;
+        }
+        else
+        {
+            game_progress[player2->backx][player2->backy]=isempty;
+            game_progress[player1->backx][player1->backy]=isempty;
+        }
     }
-    else
-    {
-        game_progress[player2->backx][player2->backy]=isempty;
-        game_progress[player1->backx][player1->backy]=isempty;
+    else{
+        game_progress[p->backx][p->backy]=isempty;
     }
     backx=-1;backy=-1;
 //分数也要进行存储
@@ -166,7 +205,7 @@ void Gamemodel::giveup(GPlayer *p)
 {
     state=win;
     connect(this,SIGNAL(gameoversignal(int,bool)),this->parent(),SLOT(GameOver(int,bool)));
-    emit gameoversignal(state,!p->myflag);
+    emit gameoversignal((int)state,!p->myflag);
 }
 
 void Gamemodel::stop()

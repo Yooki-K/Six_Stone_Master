@@ -24,6 +24,7 @@ public:
     Gamemodel *localgame=nullptr;
     SeverForm *sf=nullptr;
     Server *server=nullptr;
+    QThread *myserver=0;
 private slots:
 
 
@@ -34,11 +35,8 @@ public slots:
     void receimes(Gametype t1,GameAI ai1);
     void openline();
     void updatelabel(QString);
-    void GameOver(int, bool);
-    void GameOver();
-    void receiveprogress(QString);
+    void GameOver(int ,bool);
 signals:
-    void isokon();
 };
 
 #endif // MAINWINDOW_H

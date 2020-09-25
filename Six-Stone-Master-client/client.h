@@ -5,11 +5,13 @@
 #include<QTcpSocket>
 #include<QByteArray>
 #include<QDebug>
+#include<QTimer>
 #include<QHostAddress>
 #include"database.hpp"
 #include"gamemodel.h"
 #include"chessboard.h"
 #include"gplayer.h"
+#include"mysocket.h"
 #include<QNetworkInterface>
 class Client : public QObject
 {
@@ -19,10 +21,11 @@ private:
 public:
     explicit Client(QString,QString,QObject *parent = nullptr);
     ~Client();
-    QTcpSocket *socket=0;
+    MySocket *socket=0;
     Gamemodel *game=0;
     bool myflag;
     bool iscon=0;
+    QTime sendtimelast;
 signals:
 
 public slots:

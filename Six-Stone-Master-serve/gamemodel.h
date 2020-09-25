@@ -10,15 +10,16 @@ QEventLoop loop;\
 connect(c,SIGNAL(mouseRelease()),&loop,SLOT(quit()));\
 loop.exec();\
 }\
-player1->myturn(c->clickx,c->clicky);
-
+player1->myturn(c->clickx,c->clicky);\
+emit stopt(1);
 
 #define PLAYER2 if(player2->aitype==none){\
 QEventLoop loop;\
 connect(c,SIGNAL(mouseRelease()),&loop,SLOT(quit()));\
 loop.exec();\
 }\
-player2->myturn(c->clickx,c->clicky);
+player2->myturn(c->clickx,c->clicky);\
+emit stopt(2);
 
 #define SPLAYER1 QEventLoop loop;\
 connect(c,SIGNAL(mouseRelease()),&loop,SLOT(quit()));\
@@ -43,13 +44,15 @@ if(state!=playing){\
     QEventLoop loopp;\
     connect(this,SIGNAL(unlock()),&loopp,SLOT(quit()));\
     loopp.exec();\
-}
+}\
+emit stopt(1);
 
 #define SPLAYER2 Gameflags=!Gameflags;\
 QEventLoop looppp;\
 connect(this->parent(),SIGNAL(isokon()),&looppp,SLOT(quit()));\
 connect(this,SIGNAL(unlock()),&looppp,SLOT(quit()));\
-looppp.exec();
+looppp.exec();\
+emit stopt(2);
 
 class GPlayer;
 class Chessboard;
@@ -85,11 +88,15 @@ public:
     void giveup(GPlayer *);//认输
     void stop();
 signals:
-    void gameoversignal(Gamestate,bool);
+    void gameoversignal(int,bool);
     void gameonisok();//可以下棋信号
     void sendprogress(QString);//发送棋盘信息
     void unlock();//解除锁定
     void gameover();
+    void sendback();
+    void sendgv();
+    void stopt(int);
+    void startt(int);
 public slots:
 
 };
