@@ -22,6 +22,7 @@ public:
     int y=-1.0;
     int clickx=-1;
     int clicky=-1;
+    bool ispressed;
     Gamemodel *game;
     int timeID;
 
@@ -32,6 +33,10 @@ public:
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
     void timerEvent(QTimerEvent *event);
+    void on_btconc_clicked();
+    void on_btmyset_clicked();
+    void on_setvolume_valueChanged(int value);
+    bool eventFilter(QObject *watched, QEvent *event);
 private slots:
     void on_btback_clicked();
     void on_btgvup_clicked();
@@ -48,6 +53,7 @@ signals:
 
 public slots:
     void receivemeschat(QString);
+    void setmes(QPixmap,QString,QPixmap,QString);
 private:
     Ui::Chessboard *ui;
 };

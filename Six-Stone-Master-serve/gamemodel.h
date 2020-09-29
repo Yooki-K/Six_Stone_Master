@@ -8,6 +8,7 @@
 #define PLAYER1 if(player1->aitype==none){\
 QEventLoop loop;\
 connect(c,SIGNAL(mouseRelease()),&loop,SLOT(quit()));\
+connect(this,SIGNAL(unlock()),&loop,SLOT(quit()));\
 loop.exec();\
 }\
 player1->myturn(c->clickx,c->clicky);\
@@ -16,6 +17,7 @@ emit stopt(1);
 #define PLAYER2 if(player2->aitype==none){\
 QEventLoop loop;\
 connect(c,SIGNAL(mouseRelease()),&loop,SLOT(quit()));\
+connect(this,SIGNAL(unlock()),&loop,SLOT(quit()));\
 loop.exec();\
 }\
 player2->myturn(c->clickx,c->clicky);\

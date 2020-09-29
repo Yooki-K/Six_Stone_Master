@@ -24,7 +24,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">font: 35pt &quot;华文行楷&quot;;
-color:rgb(0, 0, 255);</string>
+color:rgb(255,255,0);</string>
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="9" column="1">

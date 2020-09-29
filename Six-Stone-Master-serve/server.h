@@ -3,6 +3,9 @@
 #include<QApplication>
 #include<QMessageBox>
 #include <QObject>
+#include<QBuffer>
+#include<QImage>
+#include<QImageReader>
 #include<QDebug>
 #include<QTcpServer>
 #include <QtGlobal>//包含随机函数
@@ -16,7 +19,6 @@
 #include<QMainWindow>
 #include"mysocket.h"
 #define IP "127.0.0.1"
-
 const int maxcurcon=2;
 class Server : public QTcpServer
 {
@@ -27,15 +29,17 @@ public:
     explicit Server(QObject *parent = nullptr,QMainWindow*w=nullptr);
     quint16 serverdk;
     bool isaccord=0;//查看是否是服务器主动断开
+    static QString apppath;
     QMainWindow*w;
-    MySocket *mysocket=0;
+    static MySocket *mysocket;
     int curconnum=0;
     QList<MySocket*>clientlist;
     QTime sendtimelast;
     // 记录对弈双方的IP信息，若主机在等待其他玩家加入，则其对手IP地址置为“-”
     QList<QPair<QString, QString> >playerFightInfo;
     void waits(int );
-
+    ~Server();
+    void sendpixtoc(MySocket *ss=mysocket);
 signals:
     void senddktoui(QString);
     void sendupdateGameInfo(Server *);
@@ -43,6 +47,8 @@ signals:
     void isokon();
     void sendupdatenum(int);
     void updatechat(QString);
+    void sendupdatemesbox(QString);
+    void sendsetmes(QPixmap,QString,QPixmap,QString);
 public slots:
    void incomingConnection(qintptr);
    void sendMestoc(MySocket *, comm_request_type, QString);

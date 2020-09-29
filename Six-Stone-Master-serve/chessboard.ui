@@ -35,7 +35,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="reso.qrc">:/new/myresource/reso/pix/chess.jpg</pixmap>
+     <pixmap>:/new/myresouce/reso/pix/chess.jpg</pixmap>
     </property>
    </widget>
    <widget class="QPushButton" name="btwhite">
@@ -188,7 +188,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/new/myresource/reso/button/back.png);
+      <string notr="true">background-image: url(:/new/myresouce/reso/button/back.png);
 background-color:transparent;</string>
      </property>
      <property name="text">
@@ -208,7 +208,7 @@ background-color:transparent;</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/new/myresource/reso/button/giveup.png);
+      <string notr="true">background-image:url(:/new/myresouce/reso/button/giveup.png);
 background-color:transparent;</string>
      </property>
      <property name="text">
@@ -231,7 +231,7 @@ background-color:transparent;</string>
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/new/myresource/reso/button/controlv.png);
+      <string notr="true">background-image: url(:/new/myresouce/reso/button/controlv.png);
 background-color:transparent;</string>
      </property>
      <property name="text">
@@ -292,8 +292,11 @@ font: 87 10pt &quot;Arial Black&quot;;</string>
        <height>59</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;设置&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/new/myresource/reso/button/set_1.png);
+      <string notr="true">background-image: url(:/new/myresouce/reso/button/set_1.png);
 background-color:transparent;</string>
      </property>
      <property name="text">
@@ -301,10 +304,78 @@ background-color:transparent;</string>
      </property>
     </widget>
    </widget>
+   <widget class="QLabel" name="tx_2">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>40</y>
+      <width>101</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-image:url(:/new/myresouce/reso/head-portrait/tx1.jpg)</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>false</bool>
+    </property>
+    <property name="margin">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="tx_1">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>490</y>
+      <width>101</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-image:url(:/new/myresouce/reso/head-portrait/tx1.jpg)</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>false</bool>
+    </property>
+    <property name="margin">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="name_2">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>200</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="name_1">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>640</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
  </widget>
- <resources>
-  <include location="reso.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

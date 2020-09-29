@@ -13,6 +13,9 @@
 #include"gplayer.h"
 #include"mysocket.h"
 #include<QNetworkInterface>
+#include<QBuffer>
+#include<QImage>
+#include<QImageReader>
 class Client : public QObject
 {
     Q_OBJECT
@@ -24,8 +27,12 @@ public:
     MySocket *socket=0;
     Gamemodel *game=0;
     bool myflag;
+    static QString apppath;
+    QPixmap pix;
+    QString pername;
     bool iscon=0;
     QTime sendtimelast;
+    void sendpixtos();
 signals:
 
 public slots:

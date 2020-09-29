@@ -21,7 +21,7 @@ Chessboard::Chessboard(QWidget *parent, Gamemodel *game) :
     ui->btmyset->installEventFilter(this);  //在窗体上为btmyset安装过滤器
     ui->setvolume->installEventFilter(this);
     Sound_effect = new QMediaPlayer(this);
-    Sound_effect->setMedia(QUrl("qrc:/new/myresource/reso/music/down.wav"));
+    Sound_effect->setMedia(QUrl("qrc:/new/myresouce/reso/music/down.wav"));
     Sound_effect->setVolume(100);
     if(game->isonline!=-1)
     {
@@ -32,8 +32,16 @@ Chessboard::Chessboard(QWidget *parent, Gamemodel *game) :
         ui->meslist->close();
         ui->btsend->close();
         ui->lineEdit->close();
+        ui->name_1->close();
+        ui->name_2->close();
+        ui->tx_1->close();
+        ui->tx_2->close();
     }
     timeID=startTimer(1000);
+    ui->tx_1->setScaledContents(true);
+    ui->tx_2->setScaledContents(true);
+    ui->name_1->setReadOnly(true);
+    ui->name_2->setReadOnly(true);
 }
 
 
@@ -48,7 +56,7 @@ void Chessboard::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.setPen(QPen(QColor("black")));
     painter.setRenderHint(QPainter:: Antialiasing, true);  //设置渲染,启动反锯齿
-    painter.setBrush(QColor(230,255,255));
+    painter.setBrush(QColor(230,255,255,135));
     if(parent()==0)
     {
         painter.drawRect(200+margin-2*r,50+margin-2*r,one*20+4*r,one*20+4*r);//画轮廓
@@ -271,26 +279,26 @@ void Chessboard::timerEvent(QTimerEvent *event)
         if(game->isonline==0)
         {
 
-            if(game->player1->ontime.remainingTime()>0)
-                t=game->player1->inttotime(game->player1->ontime.remainingTime());
+            if(game->player1->ontime->remainingTime()>0)
+                t=game->player1->inttotime(game->player1->ontime->remainingTime());
             else
-                t=game->player1->inttotime(game->player1->ontime.interval());
+                t=game->player1->inttotime(game->player1->ontime->interval());
             ui->player1time->display(t);
         }
         else{
             if(game->player2==0) return;
-            int ttime1=game->player1->ontime.remainingTime();
-            int ttime2=game->player2->ontime.remainingTime();
+            int ttime1=game->player1->ontime->remainingTime();
+            int ttime2=game->player2->ontime->remainingTime();
             if(ttime1==0||ttime2==0) return;
             if(ttime1>0)
                 t=game->player1->inttotime(ttime1);
             else
-                t=game->player1->inttotime(game->player1->ontime.interval());
+                t=game->player1->inttotime(game->player1->ontime->interval());
             ui->player1time->display(t);
             if(ttime2>0)
                 tt=game->player2->inttotime(ttime2);
             else
-                tt=game->player2->inttotime(game->player2->ontime.interval());
+                tt=game->player2->inttotime(game->player2->ontime->interval());
             ui->player2time->display(tt);
         }
     }
@@ -302,16 +310,17 @@ bool Chessboard::eventFilter(QObject *watched, QEvent *event)
    {
         if (event->type()==QEvent::Enter)     //然后再判断控件的具体事件 (这里指鼠标进入事件)
         {
-          ui->btmyset->setStyleSheet("background-image: url(:/new/myresource/reso/button/set_1.png);background-color:transparent;");
+          ui->btmyset->setStyleSheet("background-image: url(:/new/myresouce/reso/button/set_1.png);background-color:transparent;");
           if(ui->flagchoose->isHidden())
               ui->btmyset->setEnabled(1);
           else
               ui->btmyset->setEnabled(0);
         }
-        else if (event->type()==QEvent::Leave)    // 这里指鼠标离开事件
+        if (event->type()==QEvent::Leave)    // 这里指鼠标离开事件
         {
-           ui->btmyset->setStyleSheet("background-image: url(:/new/myresource/reso/button/set_2.png);background-color:transparent;");
+           ui->btmyset->setStyleSheet("background-image: url(:/new/myresouce/reso/button/set_2.png);background-color:transparent;");
          }
+
    }
    if(watched==ui->setvolume){
        if(event->type()==QEvent::Enter){
@@ -323,6 +332,14 @@ bool Chessboard::eventFilter(QObject *watched, QEvent *event)
        }
    }
    return 0;
+}
+
+void Chessboard::setmes(QPixmap p1, QString n1, QPixmap p2, QString n2)
+{
+    ui->name_1->setText(n1);
+    ui->name_2->setText(n2);
+    ui->tx_1->setPixmap(p1);
+    ui->tx_2->setPixmap(p2);
 }
 
 
@@ -364,7 +381,6 @@ void Chessboard::on_btblack_clicked()
         }
     }
     setMouseTracking(true);//开启鼠标监听
-
     ui->flagchoose->close();
     game->start();
 }

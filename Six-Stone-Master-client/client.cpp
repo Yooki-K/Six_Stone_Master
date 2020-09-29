@@ -1,5 +1,6 @@
 ﻿#include "client.h"
 #include<Qtnetwork>
+QString Client::apppath="";
 Client::Client(QString dk, QString ip, QObject *parent) : QObject(parent)
 {
     iscon=0;
@@ -7,12 +8,11 @@ Client::Client(QString dk, QString ip, QObject *parent) : QObject(parent)
     socket->connectToHost(QHostAddress(ip),dk.toUInt());
     if(socket->waitForConnected()){ iscon=1;}
     else{
-        QMessageBox::information(NULL,"连接失败","服务器连接失败（可能无访问权限或该端口服务器不存在）");
+        return;
     }
     connect(socket,&MySocket::readyRead,this,[&](){
         emit socket->send(socket->read(socket->bytesAvailable()));
-    });
-
+    },Qt::QueuedConnection);
 
 }
 
@@ -26,6 +26,19 @@ Client::~Client()
     }
     if(socket!=0){
         delete socket;}
+}
+
+void Client::sendpixtos()
+{
+    QBuffer buffer;
+    buffer.open(QIODevice::ReadWrite);
+    socket->Pix.save(&buffer,"jpg");
+    quint32 pix_len = (quint32)buffer.data().size();
+    quint32  write_len=0;
+    sendMessagetos(COMM_CLIENT_HEAD,"");
+    while (write_len<pix_len) {
+        write_len+= (quint32)socket->write(buffer.data());
+    }
 }
 
 void Client::sendMessagetos(comm_request_type type,QString toc)

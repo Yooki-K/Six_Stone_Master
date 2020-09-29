@@ -6,21 +6,27 @@
 GPlayer::GPlayer(bool flag, Gamemodel *game, QObject *parent, QString name) : QObject(parent),game(game),name(name)
 {
     myflag=flag;
-    ontime.setInterval(1000*20*60);
+    ontime=new QTimer(this);
+    ontime->setInterval(1000*20*60);
     if(game->isonline==-1)
     {
         connect(this,SIGNAL(gameover(int,bool)),this->parent()->parent(),SLOT(GameOver(int,bool)));
-        connect(&ontime,&QTimer::timeout,this,[&](){
+        connect(ontime,&QTimer::timeout,this,[&](){
             emit gameover(int(win),!myflag);
         });
     }
-    connect(&ontime,&QTimer::timeout,this,[&](){
+    connect(ontime,&QTimer::timeout,this,[&](){
         emit game->gameover();
     });
 }
 
 GPlayer::GPlayer()
 {
+}
+
+GPlayer::~GPlayer()
+{
+    game=0;
 }
 
 

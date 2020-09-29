@@ -6,13 +6,20 @@
 GPlayer::GPlayer(bool flag, Gamemodel *game, QObject *parent, QString name) : QObject(parent),game(game),name(name)
 {
     myflag=flag;
-    ontime.setInterval(20*60*1000);
+    ontime=new QTimer(this);
+    ontime->setInterval(1000*20*60);
+    connect(ontime,&QTimer::timeout,this,[&](){
+        emit game->gameover();
+    });
 }
 
 GPlayer::GPlayer()
 {
 }
-
+GPlayer::~GPlayer()
+{
+    game=0;
+}
 QString GPlayer::inttotime(int sum)
 {
     sum/=1000;

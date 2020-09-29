@@ -37,7 +37,7 @@ bool Selectform::eventFilter(QObject *watched, QEvent *event)
           }
           else if (event->type()==QEvent::Leave)    // 这里指鼠标离开事件
           {
-             ui->ButtonAA->setStyleSheet("color:rgb(0,0,255);font: 30pt;");
+             ui->ButtonAA->setStyleSheet("color:rgb(255,255,0);font: 30pt;");
            }
      }
      if (watched==ui->ButtonMA)
@@ -50,7 +50,7 @@ bool Selectform::eventFilter(QObject *watched, QEvent *event)
           }
           else if (event->type()==QEvent::Leave)
           {
-             ui->ButtonMA->setStyleSheet("color:rgb(0,0,255);font: 30pt;");
+             ui->ButtonMA->setStyleSheet("color:rgb(255,255,0);font: 30pt;");
              ui->ButtonEasy->hide();
              ui->ButtonDiff->hide();
            }
@@ -64,7 +64,7 @@ bool Selectform::eventFilter(QObject *watched, QEvent *event)
           }
           else if (event->type()==QEvent::Leave)
           {
-             ui->ButtonMM->setStyleSheet("color:rgb(0,0,255);font: 30pt;");
+             ui->ButtonMM->setStyleSheet("color:rgb(255,255,0);font: 30pt;");
            }
      }
      if (watched==ui->ButtonEasy)
@@ -75,7 +75,7 @@ bool Selectform::eventFilter(QObject *watched, QEvent *event)
           }
           else if (event->type()==QEvent::Leave)
           {
-             ui->ButtonEasy->setStyleSheet("color:rgb(0,0,255);font: 30pt;");
+             ui->ButtonEasy->setStyleSheet("color:rgb(255,255,0);font: 30pt;");
            }
      }
      if (watched==ui->ButtonDiff)
@@ -86,7 +86,7 @@ bool Selectform::eventFilter(QObject *watched, QEvent *event)
           }
           else if (event->type()==QEvent::Leave)
           {
-             ui->ButtonDiff->setStyleSheet("color:rgb(0,0,255);font: 30pt;");
+             ui->ButtonDiff->setStyleSheet("color:rgb(255,255,0);font: 30pt;");
            }
      }
      if (watched==ui->ButtonOn)
@@ -97,7 +97,7 @@ bool Selectform::eventFilter(QObject *watched, QEvent *event)
           }
           else if (event->type()==QEvent::Leave)
           {
-             ui->ButtonOn->setStyleSheet("color:rgb(0,0,255);font: 30pt;");
+             ui->ButtonOn->setStyleSheet("color:rgb(255,255,0);font: 30pt;");
            }
      }
  return QWidget::eventFilter(watched,event);     // 最后将事件交给上层对话框
@@ -139,6 +139,6 @@ void Selectform::ButtonDiffclicked()
 
 void Selectform::ButtonOnclicked()
 {
-    emit online();
     this->close();
+    emit online();  
 }

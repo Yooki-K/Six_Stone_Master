@@ -74,7 +74,7 @@ public:
     void stop();
 
 signals:
-    void gameoversignal(Gamestate,bool);
+    void gameoversignal(int,bool);
     void gameonisok();//可以下棋信号
     void sendprogress(QString);//发送棋盘信息
     void unlock();//解除锁定

@@ -17,7 +17,6 @@ const int columnline=21;
 const int r=20;
 const int one=45;
 enum what{iswhite=0,isblack,isempty};
-const char headpath[3][44]={":/new/myresource/reso/head portrait/tx1.jpg",":/new/myresource/reso/head portrait/tx2.jpg",":/new/myresource/reso/head portrait/tx3.jpg"};//记录头像路径
  // 记录当前游戏状态是playingGame（正在游戏）还是readyToPlayingGame（等待对方按下准备按钮，然后开始游戏）
 enum playerStatus
 {
@@ -44,8 +43,8 @@ enum comm_request_type
     COMM_CLIENT_CREATE,
     //客户端请求加入房间
     COMM_CLIENT_JOIN,
-    //玩家退出游戏//
-    COMM_CLIENT_QUITGAME,
+    //玩家刷新游戏大厅//
+    COMM_CLIENT_REFLASH,
     //玩家游戏操作：落子//
     COMM_CLIENT_GAMEOP,
      //玩家游戏操作：悔棋//
@@ -61,7 +60,11 @@ enum comm_request_type
     //玩家游戏操作：发送聊天信息//
     COMM_CLIENT_CHAT,
     //玩家发送胜利，游戏结束
-    COMM_CLIENT_WIN
+    COMM_CLIENT_WIN,
+     //玩家退出游戏//
+    COMM_CLIENT_QUITGAME,
+    //玩家发送头像//
+    COMM_CLIENT_HEAD
 };
 #define MOVETOCENTER(m) m->move(WIDTH/2-m->width()/2,HEIGHT/2-m->height()/2)
 

@@ -11,6 +11,8 @@ Gamemodel::Gamemodel(QObject *parent,int n):QThread(parent),isonline(n)//parent�
         c->setWindowTitle("六子棋");
         c->showMaximized();
         connect(this,SIGNAL(gameover()),this->parent(),SLOT(GameOver()));
+        connect(this->parent()->parent(),SIGNAL(sendsetmes(QPixmap,QString,QPixmap,QString)),c,SLOT(setmes(QPixmap,QString,QPixmap,QString)),Qt::QueuedConnection);
+        connect(this->parent(),SIGNAL(sendsetmes(QPixmap,QString,QPixmap,QString)),c,SLOT(setmes(QPixmap,QString,QPixmap,QString)),Qt::QueuedConnection);
     }
     //棋盘初始化
     for(int i=0;i<columnline;i++)
@@ -45,37 +47,40 @@ Gamemodel::Gamemodel(QObject *parent,int n):QThread(parent),isonline(n)//parent�
 Gamemodel::~Gamemodel()
 {
     if(c!=0){delete c;c=0;}
-    if(player1!=0){delete player1;player1=0;}
-    if(player2!=0){delete player2;player2=0;}
+//    if(player1!=0){
+//        delete player1;
+//    }
+//    if(player2!=0){
+//        delete player2;}
 }
 void Gamemodel::run()
 {
     connect(this,&Gamemodel::startt,this,[&](int n){
         if(n==1)
-            player1->ontime.start();
+            player1->ontime->start();
         else
-            player2->ontime.start();
+            player2->ontime->start();
     },Qt::QueuedConnection);
     connect(this,&Gamemodel::stopt,this,[&](int n){
         int remain;
         if(n==2){
-            remain=player2->ontime.remainingTime();
+            remain=player2->ontime->remainingTime();
             if(remain!=-1)
             {
-                player2->ontime.stop();
-                player2->ontime.setInterval(remain);
+                player2->ontime->stop();
+                player2->ontime->setInterval(remain);
             }
-            player1->ontime.start();
+            player1->ontime->start();
             return;
         }
         if(n==1){
-            remain=player1->ontime.remainingTime();
+            remain=player1->ontime->remainingTime();
             if(remain!=-1)
             {
-                player1->ontime.stop();
-                player1->ontime.setInterval(remain);
+                player1->ontime->stop();
+                player1->ontime->setInterval(remain);
             }
-            player2->ontime.start();
+            player2->ontime->start();
             return;
         }
     },Qt::QueuedConnection);
@@ -83,6 +88,7 @@ void Gamemodel::run()
         emit startt(1);
     if(isonline==-1&&player2->myflag)
         emit startt(2);
+
     while(!isstop){
         if(isonline==-1)
         {
@@ -212,7 +218,14 @@ void Gamemodel::stop()
 {
     isstop=1;
     emit unlock();
-    wait();
+    while(1)
+    {
+        wait(1000);
+        if(isRunning())
+            emit unlock();
+        else
+            return;
+    }
 }
 
 

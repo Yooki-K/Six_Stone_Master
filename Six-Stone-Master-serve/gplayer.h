@@ -20,10 +20,11 @@ private:
 
 public:
     bool myflag;GameAI aitype=none;int backx=0;int backy=0;
-    Gamemodel *game=0;QString name;QTimer ontime;
+    Gamemodel *game=0;QString name;QTimer *ontime=0;int pixindex=0;
 
     explicit GPlayer(bool,Gamemodel *game=0, QObject *parent=0 ,  QString name="Player");
     GPlayer();
+    ~GPlayer();
     //
     bool isRanged(int n);
     void waitsec(int sec);

@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui network
-QT       +=multimedia concurrent
+QT       +=multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Six-Stone-Master-serve
@@ -55,3 +55,8 @@ FORMS += \
 
 RESOURCES += \
     reso.qrc
+
+DISTFILES += \
+    reso/head portrait/tx1.jpg \
+    reso/head portrait/tx2.jpg \
+    reso/head portrait/tx3.jpg

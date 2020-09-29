@@ -15,8 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label->setAlignment(Qt::AlignHCenter);
     //设置动态背景
     QLabel* myback = new QLabel(this);
-    myback->setGeometry(0,0,WIDTH,HEIGHT);
-    QMovie * move = new QMovie(":/new/myresource/reso/gif/star1.gif");
+    myback->setGeometry(0,40,WIDTH,HEIGHT-80);
+    QMovie * move = new QMovie(":/new/myresouce/reso/gif/lion.gif");
     myback->setMovie(move);
     myback->setScaledContents(true);//大小自适应
     move->start();
@@ -57,16 +57,17 @@ void MainWindow::openline()
         server=0;
         f->show();
         sf->close();
-    });//传输关闭服务器命令给每个连接的客户端并断开连接,关闭服务器
+    },Qt::QueuedConnection);//传输关闭服务器命令给每个连接的客户端并断开连接,关闭服务器
     connect(this,&MainWindow::destroyed,sf,[&](){
         emit sf->closesever();
     });
     connect(server,SIGNAL(senddktoui(QString)),this,SLOT(updatelabel(QString)));
-    connect(server,SIGNAL(sendupdateGameInfo(Server*)),sf,SLOT(updateroom(Server*)));//修改游戏大厅
+    connect(server,SIGNAL(sendupdateGameInfo(Server*)),sf,SLOT(updateroom(Server*)),Qt::QueuedConnection);//修改游戏大厅
     connect(server,&Server::openroom,sf,&SeverForm::btopenclicked);
     connect(server,SIGNAL(sendupdatenum(int)),sf,SLOT(updatenum(int)));//更改当前连接人数
+    connect(server,&Server::sendupdatemesbox,sf,&SeverForm::updatemesbox);//传达客户端连接断开消息
+    connect(server,&Server::sendupdatemesbox,sf,&SeverForm::sendhelp);
     sf->show();
-    MOVETOCENTER(sf);
     ui->label->show();
 }
 
@@ -76,7 +77,7 @@ void MainWindow::updatelabel(QString dk)
 }
 void MainWindow::GameOver(int state, bool flag)
 {
-    if(server->mysocket!=0){
+    if(server!=0/*&&server->mysocket!=0*/){
         return;
     }
     if(localgame!=nullptr)

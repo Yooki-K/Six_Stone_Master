@@ -37,21 +37,19 @@ Gamemodel::Gamemodel(QObject *parent):QThread(parent){//parent为client
 Gamemodel::~Gamemodel()
 {
     if(c!=0)delete c;
-    if(player1!=0)delete player1;
-    if(player2!=0)delete player2;
 }
 void Gamemodel::run()
 {
     connect(this,&Gamemodel::startt,this,[&](){
-        player1->ontime.start();
+        player1->ontime->start();
     },Qt::QueuedConnection);
     connect(this,&Gamemodel::stopt,this,[&](){
 
-            int remain=player1->ontime.remainingTime();
+            int remain=player1->ontime->remainingTime();
             if(remain!=-1)
             {
-                player1->ontime.stop();
-                player1->ontime.setInterval(remain);
+                player1->ontime->stop();
+                player1->ontime->setInterval(remain);
             }
     },Qt::QueuedConnection);
     if(player1->myflag) emit startt();
@@ -141,16 +139,23 @@ void Gamemodel::backStep(GPlayer *p)
 
 void Gamemodel::giveup(GPlayer *p)
 {
-//    state=win;
-//    connect(this,SIGNAL(gameoversignal()),this->parent(),SLOT(GameOver()));
-//    emit gameoversignal(state,!p->myflag);
+    state=win;
+    connect(this,SIGNAL(gameoversignal()),this->parent(),SLOT(GameOver()));
+    emit gameoversignal(state,!p->myflag);
 }
 
 void Gamemodel::stop()
 {
     isstop=1;
     emit unlock();
-    wait();
+    while(1)
+    {
+        wait(1000);
+        if(isRunning())
+            emit unlock();
+        else
+            return;
+    }
 }
 
 

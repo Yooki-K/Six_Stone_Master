@@ -11,6 +11,8 @@ public:
     explicit MySocket(QObject *parent =nullptr);
     void clear(int n=0);
     bool isrun=1;
+    QPixmap Pix;
+    QString pername;
 public slots:
 signals:
     void send(QByteArray);
