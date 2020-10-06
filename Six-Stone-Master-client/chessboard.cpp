@@ -24,6 +24,20 @@ Chessboard::Chessboard(QWidget *parent, Gamemodel *game) ://paretn为mainwindow
     ui->tx_2->setScaledContents(true);
     ui->name_1->setReadOnly(true);
     ui->name_2->setReadOnly(true);
+    ui->p1->setScaledContents(true);
+    ui->p2->setScaledContents(true);
+    if(game->player1->myflag)
+    {
+        ui->p1->setPixmap(QPixmap(":/reso/pix/black.png"));
+        ui->p2->setPixmap(QPixmap(":/reso/pix/white.png"));
+        ui->p2->hide();
+    }
+    else{
+        ui->p2->setPixmap(QPixmap(":/reso/pix/black.png"));
+        ui->p1->setPixmap(QPixmap(":/reso/pix/white.png"));
+        ui->p1->hide();
+    }
+    connect(game,SIGNAL(change(bool)),this,SLOT(change(bool)));
 }
 
 
@@ -38,22 +52,7 @@ void Chessboard::setmes(QPixmap p1, QString n1, QPixmap p2, QString n2)
     ui->tx_1->setPixmap(p1);
     ui->tx_2->setPixmap(p2);
 }
-void Chessboard::on_btmyset_clicked()
-{
-    if(ui->btback->isHidden())
-    {
-        ui->btback->show();
-        ui->btconc->show();
-        ui->btgvup->show();
-    }
-    else{
-        ui->btback->hide();
-        ui->btconc->hide();
-        ui->btgvup->hide();
-        if(!ui->setvolume->isHidden())
-            ui->setvolume->hide();
-    }
-}
+
 void Chessboard::on_setvolume_valueChanged(int value)
 {
     ui->volume->setText("音量："+QString::number(value));
@@ -199,6 +198,7 @@ void Chessboard::mouseMoveEvent(QMouseEvent *event)
 
 void Chessboard::mouseReleaseEvent(QMouseEvent *)
 {
+
     if(  game->state!=playing) return;
     if(  game->type==AA) return;//AA模式
     if(  game->type==MA&&game->Gameflags!=game->player1->myflag) return;//AI下棋时不监听
@@ -266,4 +266,34 @@ bool Chessboard::eventFilter(QObject *watched, QEvent *event)
        }
    }
    return 0;
+}
+
+void Chessboard::change(bool p)
+{
+    if(p){
+        ui->p1->show();
+        ui->p2->hide();
+    }
+    else{
+        ui->p2->show();
+        ui->p1->hide();
+    }
+}
+
+void Chessboard::on_btmyset_clicked()
+{
+
+        if(ui->btback->isHidden())
+        {
+            ui->btback->show();
+            ui->btconc->show();
+            ui->btgvup->show();
+        }
+        else{
+            ui->btback->hide();
+            ui->btconc->hide();
+            ui->btgvup->hide();
+            if(!ui->setvolume->isHidden())
+                ui->setvolume->hide();
+        }
 }

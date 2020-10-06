@@ -7,12 +7,12 @@
         <file>reso/button/set_2.png</file>
         <file>reso/music/down.wav</file>
         <file>reso/pix/chess.jpg</file>
-        <file>reso/pix/black.jpg</file>
-        <file>reso/pix/white.jpg</file>
         <file>reso/gif/lion.gif</file>
         <file>reso/button/refllash.png</file>
         <file>reso/head-portrait/tx1.jpg</file>
         <file>reso/head-portrait/yuyan.gif</file>
+        <file>reso/pix/black.png</file>
+        <file>reso/pix/white.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

@@ -34,7 +34,8 @@ public:
     void closeflag();
     void timerEvent(QTimerEvent *);
     bool eventFilter(QObject *, QEvent *);
-
+    void closeEvent(QCloseEvent *);
+    void setbegin();
 private slots:
     void on_btwhite_clicked();
     void on_btblack_clicked();
@@ -46,6 +47,7 @@ private slots:
     void on_btmyset_clicked();
     void on_setvolume_valueChanged(int value);
     void on_btconc_clicked();
+    void change(bool);
 public slots:
     void setmes(QPixmap,QString,QPixmap,QString);
 signals:

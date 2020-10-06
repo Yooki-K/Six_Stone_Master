@@ -43,6 +43,7 @@ void MainWindow::sendhelp(QString mes)
     QTimer t;
     int n=0;
     int m=mes.toLocal8Bit().size();
+    if(m==0) return;
     int p=m/26;
     int i=1;
     while(i<=p){
@@ -106,11 +107,11 @@ void MainWindow::receiveMessage(QByteArray arr)
         case 4://双方准备，服务器开始游戏
             ui->all->hide();
             client->game=new Gamemodel(client);
+            client->game->type=MM;
+            client->game->player1=new GPlayer(client->myflag,client->game,client->game,client->socket->pername);
             client->game->c=new Chessboard(this,client->game);
-            client->game->c->show();
             connect(this,SIGNAL(sendsetmes(QPixmap,QString,QPixmap,QString)),client->game->c,SLOT(setmes(QPixmap,QString,QPixmap,QString)),Qt::QueuedConnection);
             sendsetmes(client->socket->Pix,client->socket->pername,client->pix,s);
-            client->game->player1=new GPlayer(client->myflag,client->game,client->game,client->socket->pername);
             connect(this,SIGNAL(receivemeschat(QString)),client->game->c,SLOT(receivemeschat(QString)),Qt::QueuedConnection);
             connect(client->game->c,SIGNAL(sendmesschat(QString)),client,SLOT(sendMesschat(QString)),Qt::QueuedConnection);
             connect(client->game->c,&Chessboard::sendback,client,[&](){
@@ -129,15 +130,13 @@ void MainWindow::receiveMessage(QByteArray arr)
 
             });
             client->game->start();
-
+            client->game->c->show();
             break;
         case 5://某方玩家胜利，服务器结束游戏
         {
             QString xy=QString(arr.data()).section("##",2,2);
-            client->game->state=client->game->GameEnd(xy.section("//",0,0).toInt(),xy.section("//",1,1).toInt());
-//            QEventLoop loop;
-//            QTimer::singleShot(1500,&loop,SLOT(quit()));
-//            loop.exec();
+            if(!xy.isEmpty())
+                client->game->state=client->game->GameEnd(xy.section("//",0,0).toInt(),xy.section("//",1,1).toInt());
             QMessageBox::information(NULL,"游戏结束",s);
             client->game->stop();
             delete client->game;
@@ -295,6 +294,7 @@ void MainWindow::GameOver()
 void MainWindow::on_toolButton_clicked()
 {
     client->sendMessagetos(COMM_CLIENT_REFLASH,"");
+    if(client->game==0) ui->btopen->setText("开房");
 }
 
 

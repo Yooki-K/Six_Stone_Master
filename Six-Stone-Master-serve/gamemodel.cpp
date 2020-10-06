@@ -47,11 +47,7 @@ Gamemodel::Gamemodel(QObject *parent,int n):QThread(parent),isonline(n)//parentä
 Gamemodel::~Gamemodel()
 {
     if(c!=0){delete c;c=0;}
-//    if(player1!=0){
-//        delete player1;
-//    }
-//    if(player2!=0){
-//        delete player2;}
+
 }
 void Gamemodel::run()
 {
@@ -115,17 +111,21 @@ void Gamemodel::run()
             if(player1->myflag)
             {
                 SPLAYER1
+                emit change(0);
                 c->Sound_effect->play();
                 c->update();
                 SPLAYER2
+                emit change(1);
                 c->Sound_effect->play();
                 c->update();
             }
             else{
                 SPLAYER2
+                emit change(1);
                 c->Sound_effect->play();
                 c->update();
                 SPLAYER1
+                emit change(0);
                 c->Sound_effect->play();
                 c->update();
             }

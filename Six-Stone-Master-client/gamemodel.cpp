@@ -57,20 +57,23 @@ void Gamemodel::run()
         if(player1->myflag)
         {
             SPLAYER1
+            emit change(0);
             c->Sound_effect->play();
             c->update();
             SPLAYER2
+            emit change(1);
             c->Sound_effect->play();
             c->update();
         }
         else{
             SPLAYER2
+            emit change(1);
             c->Sound_effect->play();
             c->update();
             SPLAYER1
+            emit change(0);
             c->Sound_effect->play();
             c->update();
-
         }
     }
 }
@@ -85,8 +88,10 @@ Gamestate Gamemodel::GameEnd(int x, int y)
     }
     if(isdeath)return death;
     derect=IsSix(x,y);
-    if(derect>=0) return win;
-    else return playing;
+    if(derect>=0)
+        return win;
+    else
+        return playing;
 }
 
 int Gamemodel::IsSix(int x,int y)

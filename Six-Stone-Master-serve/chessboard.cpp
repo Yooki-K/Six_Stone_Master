@@ -27,6 +27,10 @@ Chessboard::Chessboard(QWidget *parent, Gamemodel *game) :
     {
         ui->flagchoose->close();
         ui->player2time->close();
+        ui->p1->setScaledContents(true);
+        ui->p2->setScaledContents(true);
+        connect(game,SIGNAL(change(bool)),this,SLOT(change(bool)));
+        ui->btwhite->setStyleSheet("background-color:rgb(0,0,0,120)");
     }
     else{
         ui->meslist->close();
@@ -50,7 +54,26 @@ Chessboard::~Chessboard()
     delete ui;
 }
 
+void Chessboard::closeEvent(QCloseEvent *e)
+{
+    QMessageBox::information(NULL,"游戏尚在进行中","如果需要退出游戏，请认输");
+    e->ignore();
+}
 
+void Chessboard::setbegin()
+{
+    if(game->player1->myflag)
+    {
+        ui->p1->setPixmap(QPixmap(":/new/myresouce/reso/pix/black.png"));
+        ui->p2->setPixmap(QPixmap(":/new/myresouce/reso/pix/white.png"));
+        ui->p2->hide();
+    }
+    else{
+        ui->p2->setPixmap(QPixmap(":/new/myresouce/reso/pix/black.png"));
+        ui->p1->setPixmap(QPixmap(":/new/myresouce/reso/pix/white.png"));
+        ui->p1->hide();
+    }
+}
 void Chessboard::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
@@ -472,4 +495,16 @@ void Chessboard::on_btconc_clicked()
         ui->setvolume->show();
     else
         ui->setvolume->hide();
+}
+
+void Chessboard::change(bool p)
+{
+    if(p){
+        ui->p1->show();
+        ui->p2->hide();
+    }
+    else{
+        ui->p2->show();
+        ui->p1->hide();
+    }
 }

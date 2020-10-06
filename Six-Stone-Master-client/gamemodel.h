@@ -81,6 +81,7 @@ signals:
     void gameover();
     void stopt();
     void startt();
+    void change(bool);
 public slots:
 
 };

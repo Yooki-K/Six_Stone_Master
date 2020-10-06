@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="flagchoose" native="true">
    <property name="geometry">
     <rect>
@@ -372,6 +375,32 @@ background-color:transparent;</string>
       <width>111</width>
       <height>31</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="p2">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>180</y>
+      <width>60</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="p1">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>620</y>
+      <width>60</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
     </property>
    </widget>
   </widget>

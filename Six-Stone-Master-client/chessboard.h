@@ -34,7 +34,6 @@ public:
     void mouseReleaseEvent(QMouseEvent *);
     void timerEvent(QTimerEvent *event);
     void on_btconc_clicked();
-    void on_btmyset_clicked();
     void on_setvolume_valueChanged(int value);
     bool eventFilter(QObject *watched, QEvent *event);
 private slots:
@@ -45,6 +44,8 @@ private slots:
 
     void on_lineEdit_returnPressed();
 
+    void on_btmyset_clicked();
+
 signals:
     void mouseRelease();
     void sendmesschat(QString);
@@ -54,6 +55,7 @@ signals:
 public slots:
     void receivemeschat(QString);
     void setmes(QPixmap,QString,QPixmap,QString);
+    void change(bool);
 private:
     Ui::Chessboard *ui;
 };

@@ -99,6 +99,7 @@ signals:
     void sendgv();
     void stopt(int);
     void startt(int);
+    void change(bool);
 public slots:
 
 };

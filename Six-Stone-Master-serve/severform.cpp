@@ -17,6 +17,9 @@ SeverForm::SeverForm(QWidget *parent) ://parent为mainwindow
     yuxiaoyu=new QMovie(":/new/myresouce/reso/head-portrait/yuyan.gif",QByteArray(),this);
     ui->helper->setMovie(yuxiaoyu);
     ui->helper->setScaledContents(true);
+    connect(this,&SeverForm::destroyed,this,[&](){
+        emit closesever();
+    });
 
 }
 
@@ -55,22 +58,22 @@ void SeverForm::on_playerroom_itemDoubleClicked(QListWidgetItem *item)//双击�
         server->playerFightInfo[i].second=server->mysocket->ip;
        emit server->sendupdateGameInfo(server);
 
-        QList<MySocket*>allTcpSocket=server->findChildren<MySocket*>();
-        for(int j=0;j<allTcpSocket.size();j++)
+        for(int j=0;j<server->clientlist.size();j++)
            {
-               if(allTcpSocket.at(j)->ip==server->playerFightInfo.at(i).first)
+               if(server->clientlist.at(j)->ip==server->playerFightInfo.at(i).first)
                {
                    server->mysocket->game=new Gamemodel(server,0);//在主窗口中建立线程游戏
                    server->mysocket->game->type=MM;
                    server->mysocket->game->AItype=none;
                    //bool,Gamemodel *game=0, QObject *parent=0 ,  QString name="Player"
-                   server->mysocket->game->player1=new GPlayer(0,server->mysocket->game,server->mysocket->game,server->mysocket->ip);
-                   server->mysocket->game->player2=new GPlayer(1,server->mysocket->game,server->mysocket->game,tocon);
-                   allTcpSocket.at(j)->game=server->mysocket->game;
-                   allTcpSocket.at(j)->match=allTcpSocket.at(j);
-                   server->mysocket->match=allTcpSocket.at(j);
-                   allTcpSocket.at(j)->match=server->mysocket;
-                   allTcpSocket.at(j)->my=server->mysocket->game->player2;
+                   server->mysocket->game->player1=new GPlayer(0,server->mysocket->game,server->mysocket->game,server->mysocket->pername);
+                   server->mysocket->game->player2=new GPlayer(1,server->mysocket->game,server->mysocket->game,server->clientlist.at(j)->pername);
+                   server->mysocket->game->c->setbegin();
+                   server->clientlist.at(j)->game=server->mysocket->game;
+                   server->clientlist.at(j)->match=server->clientlist.at(j);
+                   server->mysocket->match=server->clientlist.at(j);
+                   server->clientlist.at(j)->match=server->mysocket;
+                   server->clientlist.at(j)->my=server->mysocket->game->player2;
                    connect(server->mysocket->game,&Gamemodel::sendback,this,[&](){
                        server->sendMestoc(server->mysocket->match,COMM_CLIENT_UNDO,"对方请求悔棋，是否同意");
                    },Qt::QueuedConnection);
@@ -79,16 +82,14 @@ void SeverForm::on_playerroom_itemDoubleClicked(QListWidgetItem *item)//双击�
                        server->sendMestoc(server->mysocket->match,COMM_CLIENT_LOSE,"对方认输，你赢了");
                        server->mysocket->match->clear();
                        server->mysocket->clear(1);
-                       delete server->mysocket;
-                       server->mysocket=0;
                    },Qt::QueuedConnection);
                    emit sendsetmes(server->mysocket->Pix,server->mysocket->pername,server->mysocket->match->Pix,server->mysocket->match->pername);
                    connect(server->mysocket->game->c,SIGNAL(sendmesschat(QString)),server,SLOT(sendmesschat(QString)),Qt::QueuedConnection);
                    connect(server,SIGNAL(updatechat(QString)),server->mysocket->game->c,SLOT(updatechat(QString)),Qt::QueuedConnection);
                     server->mysocket->game->start();
                    server->sendpixtoc();
-                   server->waits(1000);
-                   server->sendMestoc(allTcpSocket.at(j),COMM_SERVER_GAMESTART,server->mysocket->pername);
+                   server->waits(500);
+                   server->sendMestoc(server->clientlist.at(j),COMM_SERVER_GAMESTART,server->mysocket->pername);
 
                }
            }
@@ -102,9 +103,9 @@ void SeverForm::btopenclicked(QString ip,QString text)//开房
     {
         if(ui->btopenroom->text()==QString("开房"))
         {
+            ui->btopenroom->setText("关房");
             server->playerFightInfo.push_back(qMakePair<QString,QString>(ip,"-"));
             emit server->sendupdateGameInfo(server);
-            ui->btopenroom->setText("关房");
         }
         else{
             ui->btopenroom->setText("开房");
@@ -162,6 +163,7 @@ void SeverForm::sendhelp(QString mes)
 void SeverForm::on_btreflash_clicked()
 {
     emit server->sendupdateGameInfo(server);
+    if(server->mysocket->game==0) ui->btopenroom->setText("开房");
 }
 
 void SeverForm::on_btupdatemes_clicked()
@@ -184,23 +186,23 @@ void SeverForm::on_btupdatemes_clicked()
         if(ui->txpath->text().isEmpty()){
             QString file=QString(permes->readAll().data());
             QString path=file.section(" ",1,1);
-            permes->close();
             if(permes->open(QIODevice::ReadWrite|QIODevice::Truncate))
             {
                 permes->write(QString(ui->name->text()+" "+path).toLatin1());
+                permes->close();
             }
         }
         else{
             QString p=ui->txpath->text();
             if(!Pix->load(p)){
-                sendhelp("图片加载失败");
+                sendhelp("图片加载失败,建议手打输入");
                 return;
             }
-            permes->close();
             if(permes->open(QIODevice::ReadWrite|QIODevice::Truncate))
             {
 
                 permes->write(QString(ui->name->text()+" "+p).toLatin1());
+                permes->close();
             }
 
         }
@@ -216,8 +218,8 @@ void SeverForm::on_btupdatemes_clicked()
 void SeverForm::showEvent(QShowEvent *)
 {
   MOVETOCENTER(this);
-  sendhelp("你好，我是你的助手-喻小雨");
   if(permes!=0) return;
+  sendhelp("你好，我是你的助手-喻小雨");
   permes=new QFile(Server::apppath+"//perinf.txt",this);
   if(permes->open(QIODevice::ReadWrite)){
       QString mes=QString(permes->readAll().data());
@@ -229,6 +231,7 @@ void SeverForm::showEvent(QShowEvent *)
           Pix->load(":/new/myresouce/reso/head-portrait/tx1.jpg");
       }
       ui->name->setText(name);
+      permes->close();
   }
   else{
       sendhelp("信息加载失败，找不到路径,\n已使用默认信息");

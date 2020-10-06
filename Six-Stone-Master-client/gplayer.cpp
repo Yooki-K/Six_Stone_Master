@@ -29,6 +29,8 @@ QString GPlayer::inttotime(int sum)
 }
 void GPlayer::myturn(int x,int y){
     game->game_progress[x][y]=(what)myflag;
+    if(game->state==win)
+    {return;}
     game->state=game->GameEnd(x,y);
     if(game->state==win)
     {return;}

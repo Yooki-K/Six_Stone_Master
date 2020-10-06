@@ -11,6 +11,7 @@ MySocket::MySocket(QObject *parent):QTcpSocket(parent)
 //QString ip="";
 void MySocket::clear(int n)// 0 all// 1 some
 {
+    if(this==0) return;
     if(n==0){
         match=0;
         game->stop();

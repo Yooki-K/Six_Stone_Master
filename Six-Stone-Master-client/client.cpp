@@ -23,9 +23,12 @@ Client::~Client()
     {
         game->stop();
         delete game;
+        game=0;
     }
     if(socket!=0){
-        delete socket;}
+        delete socket;
+        socket=0;
+    }
 }
 
 void Client::sendpixtos()

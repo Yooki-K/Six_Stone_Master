@@ -11,5 +11,7 @@
         <file>reso/button/refllash.png</file>
         <file>reso/head-portrait/tx1.jpg</file>
         <file>reso/head-portrait/yuyan.gif</file>
+        <file>reso/pix/black.png</file>
+        <file>reso/pix/white.png</file>
     </qresource>
 </RCC>
