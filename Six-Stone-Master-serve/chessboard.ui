@@ -38,7 +38,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>:/new/myresouce/reso/pix/chess.jpg</pixmap>
+     <pixmap resource="reso.qrc">:/new/myresouce/reso/pix/chess.jpg</pixmap>
     </property>
    </widget>
    <widget class="QPushButton" name="btwhite">
@@ -387,7 +387,7 @@ background-color:transparent;</string>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string/>
     </property>
    </widget>
    <widget class="QLabel" name="p1">
@@ -400,11 +400,13 @@ background-color:transparent;</string>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string/>
     </property>
    </widget>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="reso.qrc"/>
+ </resources>
  <connections/>
 </ui>
