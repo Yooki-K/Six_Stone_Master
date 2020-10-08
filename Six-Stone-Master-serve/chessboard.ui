@@ -190,6 +190,9 @@
        <height>55</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ai模式不支持&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="styleSheet">
       <string notr="true">background-image: url(:/new/myresouce/reso/button/back.png);
 background-color:transparent;</string>

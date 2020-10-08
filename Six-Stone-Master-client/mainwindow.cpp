@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     yuxiaoyu=new QMovie(":/reso/head-portrait/yuyan.gif",QByteArray(),this);
     ui->helper->setMovie(yuxiaoyu);
     ui->helper->setScaledContents(true);
+    ui->name_2->setReadOnly(true);
     ui->tx_2->setScaledContents(true);
 }
 
@@ -83,27 +84,34 @@ void MainWindow::receiveMessage(QByteArray arr)
             client->socket->Pix=*Pix;
             client->sendMessagetos(COMM_CLIENT_IP,ip+"##"+client->socket->pername);
             sendhelp(s);
-            client->sendpixtos();
+            client->sendpixtos();//发送头像图片给服务器
             break;
         case 2://服务器关闭
+            qDebug()<<"服务器关闭";
             delete client;
             client=0;
             ui->all->show();
             ui->stackedWidget->setCurrentIndex(0);
             ui->imputdk->clear();
-            sendhelp("服务器关闭！！！");
+            sendhelp(s);
             break;
         case 3://服务器发送大厅信息
         {
             ui->playerroom->clear();
             int i=s.section("//",0,0).toInt();
             QStringList player;
+            ui->btopen->setText("开房");
             for(int j=1;j<=i;j++){
+                if(s.section("//",j,j)==ip&&j%2)
+                    ui->btopen->setText("关房");
                 player<<s.section("//",j,j);
             }
-            ui->playerroom->addItems(player);
+            ui->playerroom->addItems(player);//读取游戏大厅数据
         }
             break;
+
+        //以下信息类型处理与服务器相关处理类似
+
         case 4://双方准备，服务器开始游戏
             ui->all->hide();
             client->game=new Gamemodel(client);
@@ -112,6 +120,7 @@ void MainWindow::receiveMessage(QByteArray arr)
             client->game->c=new Chessboard(this,client->game);
             connect(this,SIGNAL(sendsetmes(QPixmap,QString,QPixmap,QString)),client->game->c,SLOT(setmes(QPixmap,QString,QPixmap,QString)),Qt::QueuedConnection);
             sendsetmes(client->socket->Pix,client->socket->pername,client->pix,s);
+            client->game->player1->matchname=s;
             connect(this,SIGNAL(receivemeschat(QString)),client->game->c,SLOT(receivemeschat(QString)),Qt::QueuedConnection);
             connect(client->game->c,SIGNAL(sendmesschat(QString)),client,SLOT(sendMesschat(QString)),Qt::QueuedConnection);
             connect(client->game->c,&Chessboard::sendback,client,[&](){
@@ -225,7 +234,7 @@ void MainWindow::receiveprogress(QString progress)
 }
 
 
-void MainWindow::on_btconnect_clicked()
+void MainWindow::on_btconnect_clicked()//连接服务器函数
 {
     if(ui->imputdk->text().isEmpty()||ui->imputip->text().isEmpty()){
         sendhelp("端口和ip不能为空");
@@ -233,14 +242,14 @@ void MainWindow::on_btconnect_clicked()
     else
     {
         client=new Client(ui->imputdk->text(),ui->imputip->text(),this);
-        if(client->iscon)
+        if(client->iscon)//连接成功
         {
             ui->stackedWidget->setCurrentIndex(1);
             ui->tx_2->setPixmap(*Pix);
             ui->name_2->setText(ui->name->text());
             connect(this,&MainWindow::destroyed,client->socket,&QTcpSocket::disconnectFromHost);
         }
-        else{
+        else{//连接失败
             delete client;
             client=0;
             sendhelp("服务器连接失败（可能无访问权限或该端口服务器不存在）");
@@ -249,16 +258,16 @@ void MainWindow::on_btconnect_clicked()
 }
 
 
-void MainWindow::on_btdiscon_clicked()
+void MainWindow::on_btdiscon_clicked()//与服务器断开连接
 {
-    client->socket->disconnectFromHost();
-        delete client;
-        client=0;
-        ui->stackedWidget->setCurrentIndex(0);
-        ui->imputdk->clear();
-        ui->playerroom->clear();
-        ui->btopen->setText("开房");
-        sendhelp("断开与服务器连接");
+    client->socket->disconnectFromHost();//断开连接
+    delete client;
+    client=0;//删除客户端
+    ui->stackedWidget->setCurrentIndex(0);
+    ui->imputdk->clear();
+    ui->playerroom->clear();
+    ui->btopen->setText("开房");
+    sendhelp("断开与服务器连接");
 
 }
 
@@ -276,17 +285,21 @@ void MainWindow::on_btopen_clicked()
     }
 }
 
-void MainWindow::on_playerroom_itemDoubleClicked(QListWidgetItem *item)
+void MainWindow::on_playerroom_itemDoubleClicked(QListWidgetItem *item)//玩家加入房间
 {
-    if(item->text().section(" ",0,0)==ip) return;
-    client->sendMessagetos(COMM_CLIENT_JOIN,item->text().section(" ",0,0)+"##"+ip);
+    if(item->text().section(" ",0,0)==ip) return;//如果是自己开的房间则返回
+    client->sendMessagetos(COMM_CLIENT_JOIN,item->text().section(" ",0,0)+"##"+ip);//发送加入房间信息给服务器
     client->myflag=0;
 }
 
 void MainWindow::GameOver()
 {
+    client->game->player1->ontime->stop();
     if(client->game->state==win)
-        client->sendMessagetos(COMM_CLIENT_WIN,client->game->player1->name+"胜利"+"##"+QString::number(client->game->backx)+"//"+QString::number(client->game->backy));
+        if(client->game->player1->istimeover)
+            client->sendMessagetos(COMM_CLIENT_WIN,client->game->player1->name+"超时，"+client->game->player1->matchname+"胜利"+"##"+QString::number(client->game->backx)+"//"+QString::number(client->game->backy));
+        else
+            client->sendMessagetos(COMM_CLIENT_WIN,client->game->player1->name+"胜利"+"##"+QString::number(client->game->backx)+"//"+QString::number(client->game->backy));
     else
         client->sendMessagetos(COMM_CLIENT_WIN,"双方和棋##"+QString::number(client->game->backx)+"//"+QString::number(client->game->backy));
 }
@@ -294,7 +307,6 @@ void MainWindow::GameOver()
 void MainWindow::on_toolButton_clicked()
 {
     client->sendMessagetos(COMM_CLIENT_REFLASH,"");
-    if(client->game==0) ui->btopen->setText("开房");
 }
 
 

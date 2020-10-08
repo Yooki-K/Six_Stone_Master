@@ -27,17 +27,17 @@ Selectform::~Selectform()
     delete ui;
 }
 
-bool Selectform::eventFilter(QObject *watched, QEvent *event)
+bool Selectform::eventFilter(QObject *watched, QEvent *event)//对按钮进行美化设置，鼠标进入，字体放大，颜色变为白色，鼠标离开恢复
 {
      if (watched==ui->ButtonAA)
      {
           if (event->type()==QEvent::Enter)     //然后再判断控件的具体事件 (这里指鼠标进入事件)
           {
-            ui->ButtonAA->setStyleSheet("color:rgb(255,255,255);font: 45pt;");
+            ui->ButtonAA->setStyleSheet("color:rgb(255,255,255);font: 45pt;");//鼠标进入，字体放大，颜色变为白色
           }
           else if (event->type()==QEvent::Leave)    // 这里指鼠标离开事件
           {
-             ui->ButtonAA->setStyleSheet("color:rgb(255,255,0);font: 30pt;");
+             ui->ButtonAA->setStyleSheet("color:rgb(255,255,0);font: 30pt;");//鼠标离开，字体缩小，颜色变为黄色
            }
      }
      if (watched==ui->ButtonMA)
@@ -107,6 +107,16 @@ void Selectform::ButtonMMclicked()
 {
     emit sendmes(MM,none);
     this->close();
+}
+
+void Selectform::showEvent()
+{
+    ui->ButtonEasy->hide();
+    ui->ButtonDiff->hide();
+    ui->ButtonMM->show();
+    ui->ButtonAA->show();
+    ui->ButtonMA->show();
+    ui->ButtonOn->show();
 }
 
 void Selectform::ButtonMAclicked()

@@ -10,7 +10,7 @@ Chessboard::Chessboard(QWidget *parent, Gamemodel *game) ://paretn为mainwindow
     ui->setupUi(this);
     setMouseTracking(true);
     Sound_effect = new QMediaPlayer(this);
-    Sound_effect->setMedia(QUrl("qrc:/reso/music/down.wav"));
+    Sound_effect->setMedia(QUrl("qrc:/reso/music/down.wav"));//设置落子音效
     Sound_effect->setVolume(100);
     timeID=startTimer(1000);
     ui->btmyset->installEventFilter(this);  //在窗体上为btmyset安装过滤器
@@ -26,6 +26,7 @@ Chessboard::Chessboard(QWidget *parent, Gamemodel *game) ://paretn为mainwindow
     ui->name_2->setReadOnly(true);
     ui->p1->setScaledContents(true);
     ui->p2->setScaledContents(true);
+    //当前设置下棋方
     if(game->player1->myflag)
     {
         ui->p1->setPixmap(QPixmap(":/reso/pix/black.png"));
@@ -61,11 +62,15 @@ void Chessboard::on_setvolume_valueChanged(int value)
 void Chessboard::on_btconc_clicked()
 {
     if(ui->setvolume->isHidden())
+    {
         ui->setvolume->show();
+    }
     else
+    {
         ui->setvolume->hide();
+    }
 }
-void Chessboard::timerEvent(QTimerEvent *event)
+void Chessboard::timerEvent(QTimerEvent *event)//显示玩家计时器，需要在20分钟内完成游戏
 {
     if(game->player1==0) return;
     if(event->timerId()==timeID)
@@ -76,37 +81,23 @@ void Chessboard::timerEvent(QTimerEvent *event)
             t=game->player1->inttotime(game->player1->ontime->remainingTime());
         else
             t=game->player1->inttotime(game->player1->ontime->interval());
+        if(game->player1->istimeover) {ui->player1time->display("00:00");return;}
         ui->player1time->display(t);
     }
 }
-void Chessboard::paintEvent(QPaintEvent *)
+void Chessboard::paintEvent(QPaintEvent *)//绘制棋盘，棋子等信息
 {
     QPainter painter(this);
     painter.setPen(QPen(QColor("black")));
     painter.setRenderHint(QPainter:: Antialiasing, true);  //设置渲染,启动反锯齿
     painter.setBrush(QColor(230,255,255,135));
     painter.drawRect(margin-2*r,margin-2*r,one*20+4*r,one*20+4*r);//画轮廓
-
     for(int i=0;i<rowline;i++){
         painter.drawLine(margin,margin+i*one,margin+20*one,margin+i*one);
     }
     for(int i=0;i<columnline;i++){
         painter.drawLine(margin+i*one,margin,margin+i*one,margin+20*one);
     }//画棋牌
-//    painter.setPen(QPen(QColor("green")));
-//    painter.setFont(QFont("微软雅黑",10,700,false));
-//    for(int i=0;i<rowline;i++){
-//        for(int j=0;j<columnline;j++){
-//            painter.drawText(QPoint(margin+one*i,margin+one*j),QString::number( game->black_score[i][j]));
-//        }
-//    }
-//    painter.setPen(QPen(QColor("blue")));
-//    painter.setFont(QFont("微软雅黑",10,700,false));
-//    for(int i=0;i<rowline;i++){
-//        for(int j=0;j<columnline;j++){
-//            painter.drawText(QPoint(margin+one*i,margin+one*j-10),QString::number( game->white_score[i][j]));
-//        }
-//    }//绘制分数（调试时用）
     painter.setPen(QPen(QColor("blue")));
     if(isselected){
         if( game->Gameflags){
@@ -116,7 +107,7 @@ void Chessboard::paintEvent(QPaintEvent *)
         }
         QPoint ing(clickx*one+margin,clicky*one+margin);
         painter.drawEllipse(ing,r,r);
-    }//鼠标监听
+    }//鼠标监听，鼠标为落子时的坐标显示
     for(int i=0;i<columnline;i++)//行
     {
         for(int j=0;j<rowline;j++)//添加21列
@@ -141,6 +132,7 @@ void Chessboard::paintEvent(QPaintEvent *)
         painter.drawEllipse(qizi,10,10);
     }//画最新棋子
     if(  game->state==win){
+        if(game->winx<0||game->winy<0) return;
         painter.setPen(QPen(QBrush(QColor("red")),8));
         switch ( game->derect) {
          case 0:
@@ -162,7 +154,7 @@ void Chessboard::paintEvent(QPaintEvent *)
 
 }
 
-void Chessboard::mouseMoveEvent(QMouseEvent *event)
+void Chessboard::mouseMoveEvent(QMouseEvent *event)//鼠标监听，当玩家为下棋方，鼠标移动到棋盘上会出现棋子影像
 {
     isselected=0;
     if(  game->state!=playing) return;
@@ -186,7 +178,7 @@ void Chessboard::mouseMoveEvent(QMouseEvent *event)
     if(minx*minx+miny*miny<r*r){
         clickx=(x-margin-minx)/one;
         clicky=(y-margin-miny)/one;
-    if(clickx<0||clicky<0||clickx>20||clicky>20) return;//防止程序异常
+    if(clickx<0||clicky<0||clickx>20||clicky>20) return;//控制范围，防止程序异常
         if(  game->game_progress[clickx][clicky]==isempty){
                 isselected=1;
                 update();
@@ -196,7 +188,7 @@ void Chessboard::mouseMoveEvent(QMouseEvent *event)
 
 }
 
-void Chessboard::mouseReleaseEvent(QMouseEvent *)
+void Chessboard::mouseReleaseEvent(QMouseEvent *)//落子
 {
 
     if(  game->state!=playing) return;
@@ -207,9 +199,6 @@ void Chessboard::mouseReleaseEvent(QMouseEvent *)
     }
 }
 
-void Chessboard::receivemeschat(QString mes){
-    ui->meslist->addItem(mes);
-}
 void Chessboard::on_btback_clicked()
 {
     emit sendback();
@@ -221,9 +210,11 @@ void Chessboard::on_btgvup_clicked()
     emit sendgiveup();
 }
 
+void Chessboard::receivemeschat(QString mes){//获得玩家聊天信息
+    ui->meslist->addItem(mes);
+}
 
-
-void Chessboard::on_btsend_clicked()
+void Chessboard::on_btsend_clicked()//发送玩家聊天信息
 {
     if(!ui->lineEdit->text().isEmpty())
     {
@@ -265,7 +256,7 @@ bool Chessboard::eventFilter(QObject *watched, QEvent *event)
            ui->volume->hide();
        }
    }
-   return 0;
+   return QWidget::eventFilter(watched,event);
 }
 
 void Chessboard::change(bool p)
@@ -296,4 +287,9 @@ void Chessboard::on_btmyset_clicked()
             if(!ui->setvolume->isHidden())
                 ui->setvolume->hide();
         }
+}
+
+void Chessboard::on_player1time_overflow()
+{
+
 }

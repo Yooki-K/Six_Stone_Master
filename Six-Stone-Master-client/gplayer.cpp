@@ -9,8 +9,18 @@ GPlayer::GPlayer(bool flag, Gamemodel *game, QObject *parent, QString name) : QO
     ontime=new QTimer(this);
     ontime->setInterval(1000*20*60);
     connect(ontime,&QTimer::timeout,this,[&](){
-        emit game->gameover();
+        this->game->state=win;
+        istimeover=1;
+        emit this->game->gameover();//计时器超过20分钟，游戏失败
     });
+}
+
+QString GPlayer::inttotime(int sum)//将时间从int转换为Qstring，并填充，格式为：__:__
+{
+    sum/=1000;
+    int m=sum/60;
+    int s=sum%60;
+    return QString(QString("%1:%2").arg(m,2,10,QLatin1Char( '0' )).arg(s,2,10,QLatin1Char( '0' )));
 }
 
 GPlayer::GPlayer()
@@ -20,19 +30,13 @@ GPlayer::~GPlayer()
 {
     game=0;
 }
-QString GPlayer::inttotime(int sum)
-{
-    sum/=1000;
-    int m=sum/60;
-    int s=sum%60;
-    return QString(QString("%1:%2").arg(m,2,10,QLatin1Char( '0' )).arg(s,2,10,QLatin1Char( '0' )));
-}
-void GPlayer::myturn(int x,int y){
+
+void GPlayer::myturn(int x,int y){//落子后更新棋盘信息，ai模式还需计算得分
     game->game_progress[x][y]=(what)myflag;
-    if(game->state==win)
+    if(game->state!=playing)
     {return;}
     game->state=game->GameEnd(x,y);
-    if(game->state==win)
+    if(game->state!=playing)
     {return;}
     game->black_score[x][y]=-2000;
     game->white_score[x][y]=-2000;
@@ -49,13 +53,13 @@ void GPlayer::myturn(int x,int y){
  }
     game->Gameflags=!game->Gameflags;//换手
     backx=x;backy=y;
-    game->backx=x;game->backy=y;
+    game->backx=x;game->backy=y;//存储最新落子信息
 }
 
-void GPlayer::calculatBlack(int fx, int fy)
+void GPlayer::calculatBlack(int fx, int fy)//黑方计分算法（简单模式），白方同
 {
     int i=1;
-    while(1){
+    while(1){//其中一方向代码，其他方向类似
         if(!isRanged(fy-i))break;
         if(game->game_progress[fx][fy-i]==isblack) {
             i++;
@@ -769,14 +773,14 @@ void GPlayer::calculatWhiteUp(int fx, int fy)
 
 }
 
-void GPlayer::calculatBlackUp(int fx, int fy)
+void GPlayer::calculatBlackUp(int fx, int fy)//黑方计分算法（困难模式），白方同
 {
 
-    struct after
+    struct after//下一位置情况
     {
-        bool notfirst=0;
-        what is=isempty;
-        int n=0;
+        bool notfirst=0;//是否是落子周围最近一圈的棋子
+        what is=isempty;//位置情况
+        int n=0;//连续同一种棋子个数
         after() {}
     }a;
     int i=1;a.n=0;a.notfirst=0;a.is=isempty;
@@ -1162,7 +1166,7 @@ maxscore GPlayer::maxwhite(){
         return scoremax;
 }
 
-maxscore GPlayer::maxblack()
+maxscore GPlayer::maxblack()//获得黑方得分最高的坐标，白方同
 {
     maxscore scoremax;
     for(int i=0;i<columnline;i++)

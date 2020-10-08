@@ -13,24 +13,24 @@ class Selectform : public QWidget
 public:
     explicit Selectform(QWidget *parent = 0);
     ~Selectform();
-    void ButtonMMclicked();
+    void ButtonMMclicked();//选择人人模式按钮点击事件
+    void showEvent();
+    void ButtonMAclicked();//选择人机模式按钮点击事件
 
-    void ButtonMAclicked();
-
-    void ButtonAAclicked();
+    void ButtonAAclicked();//选择机机模式按钮点击事件
     bool eventFilter(QObject *, QEvent *);
 
-    void ButtonEasyclicked();
+    void ButtonEasyclicked();//机器人选择简单模式按钮点击事件
 
-    void ButtonDiffclicked();
+    void ButtonDiffclicked();//机器人选择困难模式按钮点击事件
 
-    void ButtonOnclicked();
+    void ButtonOnclicked();//开启服务器按钮点击事件
 
 private:
     Ui::Selectform *ui;
 signals:
-    void sendmes(Gametype,GameAI);
-    void online();
+    void sendmes(Gametype,GameAI);//发送玩家选择模式和机器人难度信号
+    void online();//开启服务器信号
 private slots:
 };
 

@@ -5,6 +5,7 @@
 #include<QThread>
 #include"database.hpp"
 #include<QMainWindow>
+
 #define PLAYER1 if(player1->aitype==none){\
 QEventLoop loop;\
 connect(c,SIGNAL(mouseRelease()),&loop,SLOT(quit()));\
@@ -13,6 +14,8 @@ loop.exec();\
 }\
 player1->myturn(c->clickx,c->clicky);\
 emit stopt(1);
+
+
 
 #define PLAYER2 if(player2->aitype==none){\
 QEventLoop loop;\
@@ -49,6 +52,8 @@ if(state!=playing){\
 }\
 emit stopt(1);
 
+
+
 #define SPLAYER2 Gameflags=!Gameflags;\
 QEventLoop looppp;\
 connect(this->parent(),SIGNAL(isokon()),&looppp,SLOT(quit()));\
@@ -62,8 +67,8 @@ class Gamemodel:public QThread
 {
     Q_OBJECT
 private:
-    bool isstop=0;
 public:
+    bool isstop=0;
     GPlayer *player1=0;
     GPlayer *player2=0;
     Gametype type;
@@ -80,6 +85,7 @@ public:
     int white_score[rowline][columnline];
     int derect=-1;
     bool isfirst=1;
+    bool isover=0;
     int isonline=-1;//-1没联网，0创建棋盘，1不创建棋盘
     Gamemodel(QObject *parent=nullptr,int n=-1);
     ~Gamemodel();

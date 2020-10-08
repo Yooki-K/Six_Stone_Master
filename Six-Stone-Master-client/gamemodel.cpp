@@ -79,6 +79,7 @@ void Gamemodel::run()
 }
 Gamestate Gamemodel::GameEnd(int x, int y)
 {
+    if(x<0||y<0) return win;
     bool isdeath=1;
     for(int i=0;i<columnline;i++)
     {

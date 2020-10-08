@@ -6,9 +6,10 @@ AI::AI(bool flag,  QObject *parent, Gamemodel *game, GameAI type,QString name):G
     connect(this,SIGNAL(gameover(int,bool)),this->parent()->parent(),SLOT(GameOver(int,bool)));
 }
 
-void AI::myturn(int x, int y)
+void AI::myturn(int x, int y)//机器人下棋函数
 {
-    if(game->isfirst) {
+    if(game->isstop) return;
+    if(game->isfirst) {//开始时在一定范围内随机落子
         QTime time= QTime::currentTime();
         qsrand(time.msec()+time.second()*3000);  //设置随机种子
         int fx =qrand()%3+10;int fy =qrand()%3+10;
@@ -31,14 +32,15 @@ void AI::myturn(int x, int y)
     }
     else
     {
-        waitsec(700);
-        maxscore maxBlack=maxblack();
-        maxscore maxWhite=maxwhite();
+        waitsec(700);//落子等待0.7秒
+        maxscore maxBlack=maxblack();//得到黑方最高分坐标
+        maxscore maxWhite=maxwhite();//得到白方最高分坐标
+        //得到最高分坐标，落子，将此位置分数设为-2000
         if(maxBlack.score>maxWhite.score){
             game->game_progress[maxBlack.x][maxBlack.y]=(what)myflag;
             game->state=game->GameEnd(maxBlack.x,maxBlack.y);
-            if(game->state==win)
-            {emit gameover(game->state,myflag);}
+            if(game->state!=playing)
+            {emit gameover(game->state,myflag);game->isstop=1;return;}
             game->black_score[maxBlack.x][maxBlack.y]=-2000;
             game->white_score[maxBlack.x][maxBlack.y]=-2000;
             backx=maxBlack.x;backy=maxBlack.y;
@@ -49,12 +51,12 @@ void AI::myturn(int x, int y)
             else{
                 if(aitype==easy)     calculatWhite(maxBlack.x,maxBlack.y);
                 if(aitype==diff)     calculatWhiteUp(maxBlack.x,maxBlack.y);
-            }//计算此子
+            }//计算此落子造成的分数变动
         }else{
             game->game_progress[maxWhite.x][maxWhite.y]=(what)myflag;
             game->state=game->GameEnd(maxWhite.x,maxWhite.y);
-            if(game->state==win)
-            {emit gameover(game->state,myflag);}
+            if(game->state!=playing)
+            {emit gameover(game->state,myflag);game->isstop=1;return;}
             game->black_score[maxWhite.x][maxWhite.y]=-2000;
             game->white_score[maxWhite.x][maxWhite.y]=-2000;
             backx=maxWhite.x;backy=maxWhite.y;
@@ -65,10 +67,10 @@ void AI::myturn(int x, int y)
             else{
                 if(aitype==easy)     calculatWhite(maxWhite.x,maxWhite.y);
                 if(aitype==diff)     calculatWhiteUp(maxWhite.x,maxWhite.y);
-            }//计算此子
+            }//计算此落子造成的分数变动
         }
     game->Gameflags=!game->Gameflags;//换手
-    game->backx=backx;game->backy=backy;
+    game->backx=backx;game->backy=backy;//存储落子坐标
     }
 }
 

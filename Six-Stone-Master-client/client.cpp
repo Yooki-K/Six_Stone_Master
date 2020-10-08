@@ -5,13 +5,13 @@ Client::Client(QString dk, QString ip, QObject *parent) : QObject(parent)
 {
     iscon=0;
     socket=new MySocket(this);
-    socket->connectToHost(QHostAddress(ip),dk.toUInt());
-    if(socket->waitForConnected()){ iscon=1;}
+    socket->connectToHost(QHostAddress(ip),dk.toUInt());//连接服务器
+    if(socket->waitForConnected()){ iscon=1;}//判断连接是否成功
     else{
         return;
     }
     connect(socket,&MySocket::readyRead,this,[&](){
-        emit socket->send(socket->read(socket->bytesAvailable()));
+        emit socket->send(socket->read(socket->bytesAvailable()));//套接字接收消息，处理信号
     },Qt::QueuedConnection);
 
 }
@@ -19,13 +19,13 @@ Client::Client(QString dk, QString ip, QObject *parent) : QObject(parent)
 Client::~Client()
 {
 
-    if(game!=0)
+    if(game!=0)//如果游戏还在进行，停止游戏
     {
         game->stop();
         delete game;
         game=0;
     }
-    if(socket!=0){
+    if(socket!=0){//释放套接字内存
         delete socket;
         socket=0;
     }

@@ -9,14 +9,17 @@ MySocket::MySocket(QObject *parent):QTcpSocket(parent)
 //Gamemodel *game=0;
 //GPlayer*my=0;
 //QString ip="";
-void MySocket::clear(int n)// 0 all// 1 some
-{
+void MySocket::clear(int n)//清空套接字函数
+{// 0 全部清空// 1 全部清空，游戏指针除外
     if(this==0) return;
     if(n==0){
         match=0;
-        game->stop();
-        delete game;
-        game=0;
+        if(game!=0)
+        {
+            game->stop();
+            delete game;
+            game=0;
+        }
         my=0;
      }
     else{
@@ -26,10 +29,15 @@ void MySocket::clear(int n)// 0 all// 1 some
     }
 }
 
+MySocket::~MySocket()
+{
+
+}
+
 
 
 void MySocket::receiveMesfromc()
 {
-        if(this->bytesAvailable()>0)//client->socket的有效字节
-        emit send(this,this->readAll());
+        if(this->bytesAvailable()>0)
+            emit send(this,this->readAll());//发送信息给处理信息的函数
 }

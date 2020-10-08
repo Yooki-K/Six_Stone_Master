@@ -12,12 +12,16 @@ GPlayer::GPlayer(bool flag, Gamemodel *game, QObject *parent, QString name) : QO
     {
         connect(this,SIGNAL(gameover(int,bool)),this->parent()->parent(),SLOT(GameOver(int,bool)));
         connect(ontime,&QTimer::timeout,this,[&](){
+            istimeover=1;
             emit gameover(int(win),!myflag);
         });
     }
-    connect(ontime,&QTimer::timeout,this,[&](){
-        emit game->gameover();
-    });
+    else
+        connect(ontime,&QTimer::timeout,this,[&](){
+            istimeover=1;
+            this->game->state=win;
+            emit this->game->gameover();
+        });
 }
 
 GPlayer::GPlayer()
@@ -34,7 +38,7 @@ void GPlayer::myturn(int x,int y){
     if(x<0||y<0) return;
     game->game_progress[x][y]=(what)myflag;
     game->state=game->GameEnd(x,y);
-    if(game->state==win)
+    if(game->state!=playing)
     {emit gameover((int)game->state,myflag);}
     game->black_score[x][y]=-2000;
     game->white_score[x][y]=-2000;

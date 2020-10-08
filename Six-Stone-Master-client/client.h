@@ -24,20 +24,18 @@ private:
 public:
     explicit Client(QString,QString,QObject *parent = nullptr);
     ~Client();
-    MySocket *socket=0;
-    Gamemodel *game=0;
-    bool myflag;
-    static QString apppath;
-    QPixmap pix;
-    QString pername;
-    bool iscon=0;
-    QTime sendtimelast;
-    void sendpixtos();
-signals:
-
+    MySocket *socket=0;//客户端套接字
+    Gamemodel *game=0;//游戏进程指针
+    bool myflag;//黑白方（真为黑  假为白）
+    static QString apppath;//可执行程序路径
+    QPixmap pix;//头像图片
+    QString pername;//用户名
+    bool iscon=0;//判断是否连接服务器
+    QTime sendtimelast;//最后一次发送信息给服务器时间
+    void sendpixtos();//发送图片给服务器
 public slots:
-    void sendMessagetos(comm_request_type type, QString toc);
-    void sendMesschat(QString);
+    void sendMessagetos(comm_request_type type, QString toc);//发送信息给服务器
+    void sendMesschat(QString);//发送玩家聊天信息
 };
 
 

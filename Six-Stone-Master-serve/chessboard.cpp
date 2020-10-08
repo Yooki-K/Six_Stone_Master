@@ -30,7 +30,6 @@ Chessboard::Chessboard(QWidget *parent, Gamemodel *game) :
         ui->p1->setScaledContents(true);
         ui->p2->setScaledContents(true);
         connect(game,SIGNAL(change(bool)),this,SLOT(change(bool)));
-        ui->btwhite->setStyleSheet("background-color:rgb(0,0,0,120)");
     }
     else{
         ui->meslist->close();
@@ -138,6 +137,7 @@ void Chessboard::paintEvent(QPaintEvent *)
             painter.drawEllipse(qizi,10,10);
         }//画最新棋子
         if(  game->state==win){
+            if(game->winx<0||game->winy<0) return;
             painter.setPen(QPen(QBrush(QColor("red")),8));
             switch ( game->derect) {
             case 0:
@@ -215,6 +215,7 @@ void Chessboard::paintEvent(QPaintEvent *)
             painter.drawEllipse(qizi,10,10);
         }//画最新棋子
         if(  game->state==win){
+            if(game->winx<0||game->winy<0) return;
             painter.setPen(QPen(QBrush(QColor("red")),8));
             switch ( game->derect) {
             case 0:
@@ -248,12 +249,13 @@ void Chessboard::mouseMoveEvent(QMouseEvent *event)
     {
         x=event->x()-200;
         y=event->y()-50;
+        if(x<margin||y<margin||x>margin+20*one||y>margin+20*one){update();return;}
     }
     else{
         x=event->x();
         y=event->y();
+        if(x<margin||y<margin||x>margin+20*one||y>margin+20*one){update();return;}
     }
-    if(x<margin||y<margin||x>margin+20*one||y>margin+20*one)return; 
     int minx;
     int miny;
     if((x-margin)%one>one-((x-margin)%one)){
@@ -306,10 +308,13 @@ void Chessboard::timerEvent(QTimerEvent *event)
                 t=game->player1->inttotime(game->player1->ontime->remainingTime());
             else
                 t=game->player1->inttotime(game->player1->ontime->interval());
+            if(game->player1->istimeover) {ui->player1time->display("00:00");return;}
             ui->player1time->display(t);
         }
         else{
             if(game->player2==0) return;
+            if(game->player2->istimeover||game->player1->istimeover) return;
+            if(game->isover) return;
             int ttime1=game->player1->ontime->remainingTime();
             int ttime2=game->player2->ontime->remainingTime();
             if(ttime1==0||ttime2==0) return;
@@ -472,6 +477,7 @@ void Chessboard::on_btmyset_clicked()
         ui->btback->show();
         ui->btconc->show();
         ui->btgv->show();
+        ui->btwidget->setStyleSheet("background-color:rgb(0,0,0,120)");
     }
     else{
         ui->btback->hide();
@@ -479,7 +485,10 @@ void Chessboard::on_btmyset_clicked()
         ui->btgv->hide();
         if(!ui->setvolume->isHidden())
             ui->setvolume->hide();
+    ui->btwidget->setStyleSheet("");
     }
+
+
 }
 
 

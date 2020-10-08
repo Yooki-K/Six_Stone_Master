@@ -32,6 +32,9 @@
      <height>381</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;双击连接房间&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="styleSheet">
     <string notr="true">font: 12pt &quot;Arial&quot;;
 background-color:rgb(255,255,255,135);;</string>
