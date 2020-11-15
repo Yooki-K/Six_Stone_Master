@@ -39,7 +39,7 @@
       <string notr="true">QWidget#widget_2{border: 1px solid rgb(255,255,0); border-radius: 5px;};</string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page">
       <widget class="QWidget" name="pageconnect" native="true">
@@ -154,6 +154,9 @@ font: 14pt &quot;Adobe Devanagari&quot;;</string>
         <property name="text">
          <string>yumious</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
        </widget>
        <widget class="QLabel" name="tx">
         <property name="geometry">
@@ -200,11 +203,24 @@ font: 14pt &quot;Adobe Devanagari&quot;;</string>
       <widget class="QLineEdit" name="txpath">
        <property name="geometry">
         <rect>
-         <x>500</x>
+         <x>480</x>
          <y>310</y>
          <width>221</width>
          <height>31</height>
         </rect>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="toolButton_2">
+       <property name="geometry">
+        <rect>
+         <x>710</x>
+         <y>310</y>
+         <width>21</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>...</string>
        </property>
       </widget>
      </widget>
@@ -311,6 +327,9 @@ background-color:transparent;</string>
         </property>
         <property name="text">
          <string>yumious</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
        <widget class="QLabel" name="tx_2">

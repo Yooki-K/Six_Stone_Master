@@ -84,9 +84,7 @@ void Gamemodel::run()//游戏进程启动，在另一个线程中进行
         emit startt(1);
     if(isonline==-1&&player2->myflag)
         emit startt(2);
-
     while(!isstop)
-
     {
         if(isonline==-1)//本地端
         {
@@ -186,6 +184,7 @@ int Gamemodel::IsSix(int x,int y)//从四个方向判断是否六子连线
 void Gamemodel::backStep(GPlayer *p)//悔棋
 {
     if(AItype!=none) return;
+    if(isdeposit) return;
     if(isonline==0&&backx==-1&&backy==-1)
     {
         QMessageBox::information(NULL,"请求失败","当前情况不能请求悔棋");
@@ -231,6 +230,7 @@ void Gamemodel::stop()//停止游戏进程
             return;
     }//判断游戏进程是否停止，如果为停止则继续发送接送信号
 }
+
 
 
 

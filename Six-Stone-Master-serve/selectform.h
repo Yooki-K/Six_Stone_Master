@@ -14,7 +14,6 @@ public:
     explicit Selectform(QWidget *parent = 0);
     ~Selectform();
     void ButtonMMclicked();//选择人人模式按钮点击事件
-    void showEvent();
     void ButtonMAclicked();//选择人机模式按钮点击事件
 
     void ButtonAAclicked();//选择机机模式按钮点击事件
@@ -32,6 +31,7 @@ signals:
     void sendmes(Gametype,GameAI);//发送玩家选择模式和机器人难度信号
     void online();//开启服务器信号
 private slots:
+    void on_ButtonBack_clicked();
 };
 
 #endif // SELECTFORM_H

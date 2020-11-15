@@ -8,8 +8,12 @@ Chessboard::Chessboard(QWidget *parent, Gamemodel *game) :
 {
     move(200,50);
     ui->setupUi(this);
+    ui->ai->hide();
+    QPixmap h(":/new/myresouce/reso/pix/hand.png");
+    hand.operator =(QCursor(h,h.width()/2,h.height()/2));
     if(parent==0){
         ui->widget->move(WIDTH-ui->widget->width()-200,HEIGHT/2-ui->widget->height()/2);
+        ui->ai->show();
     }
     ui->btback->hide();
     ui->btconc->hide();
@@ -134,8 +138,23 @@ void Chessboard::paintEvent(QPaintEvent *)
         if(  game->backx>0&&  game->backy>0){
             painter.setBrush(QColor("red"));
             QPoint qizi(  200+game->backx*one+margin,  50+game->backy*one+margin);
+            qDebug()<<game->backx<<" "<<game->backy<<"chess";
             painter.drawEllipse(qizi,10,10);
         }//画最新棋子
+//        painter.setPen(QPen(QColor("green")));
+//        painter.setFont(QFont("微软雅黑",10,700,false));
+//        for(int i=0;i<rowline;i++){
+//            for(int j=0;j<columnline;j++){
+//                painter.drawText(QPoint(margin+one*i,margin+one*j),QString::number( game->black_score[i][j]));
+//            }
+//        }
+//        painter.setPen(QPen(QColor("blue")));
+//        painter.setFont(QFont("微软雅黑",10,700,false));
+//        for(int i=0;i<rowline;i++){
+//            for(int j=0;j<columnline;j++){
+//                painter.drawText(QPoint(margin+one*i,margin+one*j-10),QString::number( game->white_score[i][j]));
+//            }
+//        }//绘制分数（调试时用）
         if(  game->state==win){
             if(game->winx<0||game->winy<0) return;
             painter.setPen(QPen(QBrush(QColor("red")),8));
@@ -167,20 +186,20 @@ void Chessboard::paintEvent(QPaintEvent *)
         for(int i=0;i<columnline;i++){
             painter.drawLine(margin+i*one,margin,margin+i*one,margin+20*one);
         }//画棋牌
-        //    painter.setPen(QPen(QColor("green")));
-        //    painter.setFont(QFont("微软雅黑",10,700,false));
-        //    for(int i=0;i<rowline;i++){
-        //        for(int j=0;j<columnline;j++){
-        //            painter.drawText(QPoint(margin+one*i,margin+one*j),QString::number( game->black_score[i][j]));
-        //        }
-        //    }
-        //    painter.setPen(QPen(QColor("blue")));
-        //    painter.setFont(QFont("微软雅黑",10,700,false));
-        //    for(int i=0;i<rowline;i++){
-        //        for(int j=0;j<columnline;j++){
-        //            painter.drawText(QPoint(margin+one*i,margin+one*j-10),QString::number( game->white_score[i][j]));
-        //        }
-        //    }//绘制分数（调试时用）
+//            painter.setPen(QPen(QColor("green")));
+//            painter.setFont(QFont("微软雅黑",10,700,false));
+//            for(int i=0;i<rowline;i++){
+//                for(int j=0;j<columnline;j++){
+//                    painter.drawText(QPoint(margin+one*i,margin+one*j),QString::number( game->black_score[i][j]));
+//                }
+//            }
+//            painter.setPen(QPen(QColor("blue")));
+//            painter.setFont(QFont("微软雅黑",10,700,false));
+//            for(int i=0;i<rowline;i++){
+//                for(int j=0;j<columnline;j++){
+//                    painter.drawText(QPoint(margin+one*i,margin+one*j-10),QString::number( game->white_score[i][j]));
+//                }
+//            }//绘制分数（调试时用）
         painter.setPen(QPen(QColor("blue")));
         if(isselected){
             if( game->Gameflags){
@@ -241,7 +260,7 @@ void Chessboard::paintEvent(QPaintEvent *)
 
 void Chessboard::mouseMoveEvent(QMouseEvent *event)
 {
-    isselected=0;
+    isselected=0;setCursor(Qt::ArrowCursor);
     if(  game->state!=playing) return;
     if(  game->type==AA)return;
     if(  game->type==MA&&game->Gameflags!=game->player1->myflag) return;
@@ -256,6 +275,7 @@ void Chessboard::mouseMoveEvent(QMouseEvent *event)
         y=event->y();
         if(x<margin||y<margin||x>margin+20*one||y>margin+20*one){update();return;}
     }
+    this->setCursor(hand);
     int minx;
     int miny;
     if((x-margin)%one>one-((x-margin)%one)){
@@ -516,4 +536,25 @@ void Chessboard::change(bool p)
         ui->p2->show();
         ui->p1->hide();
     }
+}
+
+void Chessboard::on_ai_clicked()
+{
+    nofai++;
+    if(nofai%2==0){//关闭
+        game->isdeposit=0;
+        ui->ai->setToolTip("开启托管");
+        ui->ai->setStyleSheet("background-image: url(:/new/myresouce/reso/pix/aiopen.png);background-color:transparent;");
+        emit sendmesschat(QTime::currentTime().toString()+' '+game->player1->name+"关闭托管");
+        ui->meslist->addItem(QTime::currentTime().toString()+' '+game->player1->name+"关闭托管");
+
+    }else{//开启
+        game->isdeposit=1;
+        ui->ai->setToolTip("关闭托管");
+        ui->ai->setStyleSheet("background-image: url(:/new/myresouce/reso/pix/aiclose.png);background-color:transparent;");
+        emit sendmesschat(QTime::currentTime().toString()+' '+game->player1->name+"开启托管");
+        ui->meslist->addItem(QTime::currentTime().toString()+' '+game->player1->name+"关闭托管");
+
+    }
+    game->aifirst=1;
 }

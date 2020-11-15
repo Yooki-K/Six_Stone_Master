@@ -2,7 +2,28 @@
 
 MySocket::MySocket(QObject *parent):QTcpSocket(parent)
 {
-
+    connect(this,SIGNAL(send(MySocket*,QByteArray)),this->parent(),SLOT(receiveMesfromc(MySocket*,QByteArray)));
+    connect(this,&MySocket::readyRead,this,[&](){
+        mes.append(readAll());
+    });
+    QtConcurrent::run([&](){
+        Sender sen;
+        bool isover=0;
+        connect(this,&MySocket::destroyed,&sen,[&](){
+            isover=1;
+        },Qt::QueuedConnection);
+        while (!isover) {
+            QEventLoop loop;
+            QTimer::singleShot(100,&loop,SLOT(quit()));
+            connect(this,&MySocket::destroyed,&loop,&QEventLoop::quit);
+            loop.exec();
+            if(isover) break;
+            if(!mes.isNull()){
+                emit send(this,mes);
+                mes.clear();
+            }
+        }
+    });
 }
 
 //MySocket*match=0;
@@ -29,15 +50,7 @@ void MySocket::clear(int n)//清空套接字函数
     }
 }
 
-MySocket::~MySocket()
-{
-
-}
 
 
 
-void MySocket::receiveMesfromc()
-{
-        if(this->bytesAvailable()>0)
-            emit send(this,this->readAll());//发送信息给处理信息的函数
-}
+

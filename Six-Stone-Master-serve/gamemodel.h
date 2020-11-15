@@ -6,6 +6,7 @@
 #include"database.hpp"
 #include<QMainWindow>
 
+
 #define PLAYER1 if(player1->aitype==none){\
 QEventLoop loop;\
 connect(c,SIGNAL(mouseRelease()),&loop,SLOT(quit()));\
@@ -26,10 +27,26 @@ loop.exec();\
 player2->myturn(c->clickx,c->clicky);\
 emit stopt(2);
 
-#define SPLAYER1 QEventLoop loop;\
+#define SPLAYER1 if(isdeposit){\
+if(aifirst)\
+{\
+p1_wait=player1;\
+ai1=new AI(player1->myflag,this,this,diff,player1->name);\
+player1=ai1;\
+aifirst=0;\
+}\
+}else{\
+if(aifirst)\
+{\
+player1=p1_wait;\
+player1->backx=-1;player1->backy=-1;\
+aifirst=0;\
+}\
+QEventLoop loop;\
 connect(c,SIGNAL(mouseRelease()),&loop,SLOT(quit()));\
 connect(this,SIGNAL(unlock()),&loop,SLOT(quit()));\
 loop.exec();\
+}\
 if(isstop) break;\
 player1->myturn(c->clickx,c->clicky);\
 QString progress="";\
@@ -38,8 +55,16 @@ for(int i=0;i<rowline;i++){\
         progress+=QString::number(int(game_progress[i][j]));\
     }\
 }\
+    if(player1->myflag){\
+        player1->calculatBlackUp(c->clickx,c->clicky);\
+    }else{\
+        player1->calculatWhiteUp(c->clickx,c->clicky);\
+    }\
 connect(this,SIGNAL(sendprogress(QString)),this->parent(),SLOT(receiveprogress(QString)));\
-emit sendprogress(progress);\
+if(!isdeposit){\
+emit sendprogress(progress+"##"+QString::number(c->clickx)+"##"+QString::number(c->clicky));}\
+else{\
+emit sendprogress(progress+"##"+QString::number(backx)+"##"+QString::number(backy));}\
 if(isstop) break;\
 if(state!=playing){\
     QEventLoop loop;\
@@ -61,6 +86,7 @@ connect(this,SIGNAL(unlock()),&looppp,SLOT(quit()));\
 looppp.exec();\
 emit stopt(2);
 
+class AI;
 class GPlayer;
 class Chessboard;
 class Gamemodel:public QThread
@@ -69,8 +95,12 @@ class Gamemodel:public QThread
 private:
 public:
     bool isstop=0;
+    bool isdeposit=0;
+    bool aifirst=0;
     GPlayer *player1=0;
     GPlayer *player2=0;
+    GPlayer *p1_wait=0;
+    AI *ai1=0;
     Gametype type;
     Gamestate state;
     GameAI AItype;

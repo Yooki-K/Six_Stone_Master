@@ -3,8 +3,6 @@
 AI::AI(bool flag,  QObject *parent, Gamemodel *game, GameAI type,QString name):GPlayer(flag,game,parent,name)
 {
     aitype=type;
-    if(game->isonline==-1)
-        connect(this,SIGNAL(gameover(int,bool)),this->parent()->parent(),SLOT(GameOver(int,bool)));
 }
 
 void AI::myturn(int x, int y)//机器人下棋函数
@@ -30,7 +28,6 @@ void AI::myturn(int x, int y)//机器人下棋函数
         }//计算此子
         game->Gameflags=!game->Gameflags;//换手
         game->backx=backx;game->backy=backy;
-        qDebug()<<game->backx<<" "<<game->backy<<"ai";
     }
     else
     {
@@ -42,7 +39,7 @@ void AI::myturn(int x, int y)//机器人下棋函数
             game->game_progress[maxBlack.x][maxBlack.y]=(what)myflag;
             game->state=game->GameEnd(maxBlack.x,maxBlack.y);
             if(game->state!=playing)
-            {emit gameover(game->state,myflag);game->isstop=1;return;}
+            {return;}
             game->black_score[maxBlack.x][maxBlack.y]=-2000;
             game->white_score[maxBlack.x][maxBlack.y]=-2000;
             backx=maxBlack.x;backy=maxBlack.y;
@@ -58,7 +55,7 @@ void AI::myturn(int x, int y)//机器人下棋函数
             game->game_progress[maxWhite.x][maxWhite.y]=(what)myflag;
             game->state=game->GameEnd(maxWhite.x,maxWhite.y);
             if(game->state!=playing)
-            {emit gameover(game->state,myflag);game->isstop=1;return;}
+            {return;}
             game->black_score[maxWhite.x][maxWhite.y]=-2000;
             game->white_score[maxWhite.x][maxWhite.y]=-2000;
             backx=maxWhite.x;backy=maxWhite.y;
@@ -73,7 +70,6 @@ void AI::myturn(int x, int y)//机器人下棋函数
         }
     game->Gameflags=!game->Gameflags;//换手
     game->backx=backx;game->backy=backy;//存储落子坐标
-    qDebug()<<game->backx<<" "<<game->backy<<"ai";
     }
 }
 

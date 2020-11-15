@@ -3,6 +3,15 @@
 #include<QTcpSocket>
 #include"gamemodel.h"
 #include <QObject>
+#include<QtConcurrent>
+class Sender : public QObject
+{
+    Q_OBJECT
+public:
+    Sender(QObject *parent = nullptr):QObject(parent) {}
+signals:
+    void isread();
+};
 
 class MySocket:public QTcpSocket
 {
@@ -15,12 +24,11 @@ public:
     QString pername;//用户名
     GPlayer*my=0;//玩家指针
     QString ip="";//ip
+    QByteArray mes;
     void clear(int n=0);//对当前套接字进行清空
-    ~MySocket();
 signals:
     void send(MySocket *,QByteArray);//发送消息信号
 public slots:
-    void receiveMesfromc();//接收消息
 };
 
 #endif // MYSOCKET_H

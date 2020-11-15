@@ -89,7 +89,7 @@
    <widget class="QWidget" name="btwidget" native="true">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>180</x>
       <y>700</y>
       <width>231</width>
       <height>141</height>
@@ -312,6 +312,25 @@ background-color:transparent;</string>
       <width>60</width>
       <height>60</height>
      </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="ai">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>660</y>
+      <width>131</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;开启托管&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-image: url(:/reso/pix/aiopen.png);background-color:transparent;</string>
     </property>
     <property name="text">
      <string/>

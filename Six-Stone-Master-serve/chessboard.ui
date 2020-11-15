@@ -175,7 +175,7 @@
    <widget class="QWidget" name="btwidget" native="true">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>180</x>
       <y>710</y>
       <width>221</width>
       <height>141</height>
@@ -404,6 +404,38 @@ background-color:transparent;</string>
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="ai">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>670</y>
+      <width>131</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;开启托管&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-image: url(:/new/myresouce/reso/pix/aiopen.png);
+background-color:transparent;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>21</height>
+     </size>
+    </property>
+    <property name="shortcut">
+     <string>Shift+A</string>
+    </property>
+    <property name="popupMode">
+     <enum>QToolButton::DelayedPopup</enum>
     </property>
    </widget>
   </widget>

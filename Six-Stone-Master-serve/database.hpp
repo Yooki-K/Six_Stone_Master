@@ -11,6 +11,7 @@
 enum Gametype{MM,MA,AA};//游戏模式,创建游戏时赋值
 enum Gamestate{win,playing,death,waiting};//游戏状态,初始化时设置
 enum GameAI{easy,diff,none};//AI模式,创建游戏时赋值
+enum mestype{start=-5,ready};
 const int margin=45;
 const int rowline=21;
 const int columnline=21;

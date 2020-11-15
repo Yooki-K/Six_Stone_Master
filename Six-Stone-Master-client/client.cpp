@@ -11,9 +11,16 @@ Client::Client(QString dk, QString ip, QObject *parent) : QObject(parent)
         return;
     }
     connect(socket,&MySocket::readyRead,this,[&](){
-        emit socket->send(socket->read(socket->bytesAvailable()));//套接字接收消息，处理信号
+        socket->mes.append(socket->readAll());
     },Qt::QueuedConnection);
+}
 
+void Client::sendMessagetos(comm_request_type ty,QString toc)
+{
+            waits(100);
+            toc.prepend(QString::number(int(ty))+"##");
+            if(ty!=COMM_CLIENT_HEAD)toc.append("&&");
+            socket->write(toc.toUtf8());
 }
 
 Client::~Client()
@@ -25,14 +32,15 @@ Client::~Client()
         delete game;
         game=0;
     }
-    if(socket!=0){//释放套接字内存
+    if(socket!=nullptr){//释放套接字内存
         delete socket;
-        socket=0;
+        socket=nullptr;
     }
 }
 
 void Client::sendpixtos()
 {
+    waits(100);
     QBuffer buffer;
     buffer.open(QIODevice::ReadWrite);
     socket->Pix.save(&buffer,"jpg");
@@ -44,26 +52,14 @@ void Client::sendpixtos()
     }
 }
 
-void Client::sendMessagetos(comm_request_type type,QString toc)
+void Client::waits(int n)
 {
-    if(sendtimelast.isNull())
-    {
-        sendtimelast=QTime::currentTime();
-    }
-    else
-    {
-        int cha=sendtimelast.msecsTo(QTime::currentTime());
-        if(cha<1000)
-        {
-            QEventLoop loop;
-            QTimer::singleShot(1000-cha,&loop,SLOT(quit()));
-            loop.exec();
-        }
-    }
-            toc.prepend(QString::number(int(type))+"##");
-            socket->write(toc.toUtf8());
-            sendtimelast=QTime::currentTime();
+    QEventLoop loop;
+    QTimer::singleShot(n,&loop,SLOT(quit()));
+    loop.exec();
 }
+
+
 
 void Client::sendMesschat(QString mes)
 {

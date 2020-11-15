@@ -31,7 +31,9 @@ SOURCES += \
     chessboard.cpp \
     gamemodel.cpp \
     gplayer.cpp \
-    mysocket.cpp
+    mysocket.cpp \
+    waitplayer.cpp \
+    ai.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -40,7 +42,9 @@ HEADERS += \
     chessboard.h \
     gamemodel.h \
     gplayer.h \
-    mysocket.h
+    mysocket.h \
+    waitplayer.h \
+    ai.h
 
 FORMS += \
         mainwindow.ui \
@@ -50,3 +54,5 @@ RESOURCES += \
     reso.qrc
 
 DISTFILES +=
+
+RC_FILE =seticon.rc

@@ -11,6 +11,7 @@ SeverForm::SeverForm(QWidget *parent) ://parent为mainwindow
         btopenclicked();
     },Qt::QueuedConnection);
     ui->txpath->hide();
+    ui->getpath->hide();
     ui->mesbox->setReadOnly(true);
     ui->tx->setScaledContents(true);
     ui->name->setReadOnly(true);
@@ -67,6 +68,11 @@ void SeverForm::on_playerroom_itemDoubleClicked(QListWidgetItem *item)//玩家�
            {
                if(server->clientlist.at(j)->ip==server->playerFightInfo.at(i).first)
                {
+                   w=new Waitplayer(1,this);
+                   w->show();
+                   server->waits(1000);
+                   delete w;
+                   w=nullptr;
                    server->mysocket->game=new Gamemodel(server,0);//在主窗口中建立线程游戏
                    server->mysocket->game->type=MM;
                    server->mysocket->game->AItype=none;
@@ -91,11 +97,10 @@ void SeverForm::on_playerroom_itemDoubleClicked(QListWidgetItem *item)//玩家�
                    emit sendsetmes(server->mysocket->Pix,server->mysocket->pername,server->mysocket->match->Pix,server->mysocket->match->pername);
                    connect(server->mysocket->game->c,SIGNAL(sendmesschat(QString)),server,SLOT(sendmesschat(QString)),Qt::QueuedConnection);
                    connect(server,SIGNAL(updatechat(QString)),server->mysocket->game->c,SLOT(updatechat(QString)),Qt::QueuedConnection);
-                    server->mysocket->game->start();
                    server->sendpixtoc();
-                   server->waits(500);
+//                   server->waits(500);
                    server->sendMestoc(server->clientlist.at(j),COMM_SERVER_GAMESTART,server->mysocket->pername);
-
+                    server->mysocket->game->start();
                }
            }
    }
@@ -111,6 +116,19 @@ void SeverForm::btopenclicked(QString ip,QString text)//开房
             ui->btopenroom->setText("关房");
             server->playerFightInfo.push_back(qMakePair<QString,QString>(ip,"-"));
             emit server->sendupdateGameInfo(server);
+            if(w==nullptr)
+            {
+                w=new Waitplayer(0,server->mysocket->Pix,server->mysocket->pername,this);
+                w->show();
+                connect(w,&Waitplayer::closeroom,this,[&](){
+                    btopenclicked();
+                });
+                connect(server,&Server::sendmes,this,[&](QPixmap p,QString name){
+                   w->setplayer2(p,name);
+                   delete w;
+                   w=nullptr;
+                });
+            }
         }
         else{
             ui->btopenroom->setText("开房");
@@ -156,6 +174,7 @@ void SeverForm::sendhelp(QString mes)//小助手提示对话函数
     QEventLoop loop;
     QTimer::singleShot(2000-2000/mes.size(),&loop,SLOT(quit()));//等待小助手提示完毕
     loop.exec();
+    ui->hlepmes->setText(mes);
 }
 
 void SeverForm::on_btreflash_clicked()
@@ -171,6 +190,7 @@ void SeverForm::on_btupdatemes_clicked()//修改个人信息函数
     if(ui->btupdatemes->text()=="修改"){
         ui->name->setReadOnly(!true);
         ui->txpath->show();
+        ui->getpath->show();
         ui->btupdatemes->setText("保存");
         sendhelp("如需换头像，请在上方框中输入图片绝对路径，注意路径中不能有空格和中文,图片请使用jpg格式");
         return;
@@ -202,6 +222,7 @@ void SeverForm::on_btupdatemes_clicked()//修改个人信息函数
             }
         }
         ui->txpath->hide();
+        ui->getpath->hide();
         ui->name->setReadOnly(true);
         ui->btupdatemes->setText("修改");
         ui->tx->setPixmap(*Pix);
@@ -222,7 +243,8 @@ void SeverForm::showEvent(QShowEvent *)//界面显示时，加载玩家个人信
       QString txpath=mes.section(" ",1,1);
       Pix=new QPixmap;
       if(!Pix->load(txpath)){
-          sendhelp("头像加载失败,使用默认头像");
+          if(mes=="") sendhelp("初次登录，请完善信息");
+          else sendhelp("头像加载失败,使用默认头像");
           Pix->load(":/new/myresouce/reso/head-portrait/tx1.jpg");
       }
       ui->name->setText(name);
@@ -237,4 +259,13 @@ void SeverForm::showEvent(QShowEvent *)//界面显示时，加载玩家个人信
   ui->tx->setScaledContents(true);
   server->mysocket->Pix=*Pix;
   server->mysocket->pername=ui->name->text();
+}
+
+
+
+void SeverForm::on_getpath_clicked()
+{
+    QFileDialog seekfile;
+    seekfile.setAcceptMode(QFileDialog::AcceptOpen);
+    ui->txpath->setText(seekfile.getOpenFileName(NULL,"头像文件",".","*.jpg"));
 }

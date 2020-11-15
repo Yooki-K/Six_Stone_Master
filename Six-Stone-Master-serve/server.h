@@ -46,6 +46,7 @@ signals:
     void updatechat(QString);//玩家聊天时触发的信号
     void sendupdatemesbox(QString);//客户端连接和断开时触发的信号
     void sendsetmes(QPixmap,QString,QPixmap,QString);//发送一个房间两个玩家的个人信息（用户名、头像）
+    void sendmes(QPixmap,QString);
 public slots:
    void incomingConnection(qintptr);//当有客户端连接时调用的槽函数
    void sendMestoc(MySocket *, comm_request_type, QString);//给客户端发送信息
@@ -54,7 +55,7 @@ public slots:
    void clearroom(MySocket*);//清空房间
    void clearroom(QString);//清空房间（重载函数）
    void GameOver();//游戏结束
-   void receiveprogress(QString);//接收棋盘信息
+   void receiveprogress(QString);//接收棋盘信息  
 };
 
 #endif // SERVER_H

@@ -27,17 +27,24 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *)
 {
-    if(server==nullptr) return;
-    for(int i=0;i<server->clientlist.size();i++){
-        server->sendMestoc(server->clientlist.at(i),COMM_SERVER_CLOSE,"端口"+QString::number(server->serverdk)+"服务器关闭");
-        server->clientlist.at(i)->waitForBytesWritten();
-        if(server->clientlist.at(i)->match!=0){
-            server->clientlist.at(i)->match->clear();
-            server->clientlist.at(i)->clear(1);
+    if(server!=nullptr)
+    {
+        for(int i=0;i<server->clientlist.size();i++){
+            server->sendMestoc(server->clientlist.at(i),COMM_SERVER_CLOSE,"端口"+QString::number(server->serverdk)+"服务器关闭");
+            server->clientlist.at(i)->waitForBytesWritten();
+            if(server->clientlist.at(i)->match!=0){
+                server->clientlist.at(i)->match->clear();
+                server->clientlist.at(i)->clear(1);
+            }
         }
+        delete server;
+        server=nullptr;
     }
-    delete server;
-    server=nullptr;
+    if(localgame!=nullptr){
+        localgame->stop();
+        delete localgame;
+        localgame=nullptr;
+    }
 }
 
 void MainWindow::receimes(Gametype t1, GameAI ai1)//接收玩家选择的模式和难度
@@ -98,17 +105,15 @@ void MainWindow::GameOver(int state, bool flag)//本地端游戏结束函数
             gameend+="获胜,是否重新开始游戏";
         }
         else gameend="双方和棋,是否重新开始游戏";
-        localgame->stop();
         QMessageBox:: StandardButton result=QMessageBox::information(NULL, "游戏结束", gameend,QMessageBox::Yes|QMessageBox::No);
         if(result==QMessageBox::Yes)
         {
+            localgame->stop();
             delete localgame;
             localgame=nullptr;
             f->show();
         }//回到选择界面
         else{
-            delete localgame;
-            localgame=nullptr;
             exit(0);
         }//退出程序
     }

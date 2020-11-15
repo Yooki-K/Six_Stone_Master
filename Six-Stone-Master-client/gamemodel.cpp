@@ -1,6 +1,6 @@
 ﻿#include "gamemodel.h"
 #include"chessboard.h"
-#include"gplayer.h"
+#include"ai.h"
 Gamemodel::Gamemodel(QObject *parent):QThread(parent){//parent为client
     state=playing;//设置游戏模式为进行中
     //棋盘初始化

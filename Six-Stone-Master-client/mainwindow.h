@@ -7,6 +7,8 @@
 #include<QHostInfo>
 #include<QMovie>
 #include<QRegExp>
+#include<waitplayer.h>
+#include<QFileDialog>
 namespace Ui {
 class MainWindow;
 }
@@ -31,12 +33,15 @@ private slots:
     void on_toolButton_clicked();//刷新界面
     void on_btupdatemes_clicked();//修改玩家个人信息按钮点击事件
     void showEvent(QShowEvent *);
+    void on_toolButton_2_clicked();
+    void on_imputdk_returnPressed();
 private:
     Ui::MainWindow *ui;
     QString ip;//ip
     QMovie *yuxiaoyu=0;//助手gif
     QFile *permes=0;//个人信息存储文件，路径与可执行文件一致
     QPixmap *Pix=0;//头像图片
+    Waitplayer *w=nullptr;
 signals:
     void isokon();//可以下棋信号
     void receivemeschat(QString);//接收玩家聊天消息

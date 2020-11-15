@@ -206,7 +206,7 @@ font: 14pt &quot;Arial&quot;;</string>
      </rect>
     </property>
     <property name="text">
-     <string>yumious</string>
+     <string/>
     </property>
    </widget>
    <widget class="QLabel" name="tx">
@@ -298,6 +298,19 @@ font: 14pt &quot;Arial&quot;;</string>
      <width>221</width>
      <height>31</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="getpath">
+   <property name="geometry">
+    <rect>
+     <x>780</x>
+     <y>330</y>
+     <width>21</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
    </property>
   </widget>
  </widget>

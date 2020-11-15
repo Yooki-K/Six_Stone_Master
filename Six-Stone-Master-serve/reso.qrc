@@ -13,6 +13,9 @@
         <file>reso/head-portrait/yuyan.gif</file>
         <file>reso/pix/black.png</file>
         <file>reso/pix/white.png</file>
+        <file>reso/pix/aiclose.png</file>
+        <file>reso/pix/aiopen.png</file>
+        <file>reso/pix/hand.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

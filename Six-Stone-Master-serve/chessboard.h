@@ -9,6 +9,7 @@
 #include<math.h>
 #include<QTime>
 #include<QMediaPlayer>
+#include<QCursor>
 namespace Ui {
 class Chessboard;
 }
@@ -20,6 +21,7 @@ public:
     bool isselected=0;
     int x=-1.0;
     int y=-1.0;
+    int nofai=0;
     int clickx=-1;
     int clicky=-1;
     Gamemodel *game=0;
@@ -48,6 +50,8 @@ private slots:
     void on_setvolume_valueChanged(int value);
     void on_btconc_clicked();
     void change(bool);
+    void on_ai_clicked();
+
 public slots:
     void setmes(QPixmap,QString,QPixmap,QString);
 signals:
@@ -56,6 +60,7 @@ signals:
 
 private:
     Ui::Chessboard *ui;
+    QCursor hand;
 };
 
 #endif // CHESSBOARD_H

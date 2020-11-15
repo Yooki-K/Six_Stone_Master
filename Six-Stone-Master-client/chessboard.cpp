@@ -26,6 +26,8 @@ Chessboard::Chessboard(QWidget *parent, Gamemodel *game) ://paretn为mainwindow
     ui->name_2->setReadOnly(true);
     ui->p1->setScaledContents(true);
     ui->p2->setScaledContents(true);
+    QPixmap h(":/reso/pix/hand.png");
+    hand.operator =(QCursor(h,h.width()/2,h.height()/2));
     //当前设置下棋方
     if(game->player1->myflag)
     {
@@ -131,6 +133,20 @@ void Chessboard::paintEvent(QPaintEvent *)//绘制棋盘，棋子等信息
         QPoint qizi(  game->backx*one+margin,  game->backy*one+margin);
         painter.drawEllipse(qizi,10,10);
     }//画最新棋子
+//    painter.setPen(QPen(QColor("green")));
+//    painter.setFont(QFont("微软雅黑",10,700,false));
+//    for(int i=0;i<rowline;i++){
+//        for(int j=0;j<columnline;j++){
+//            painter.drawText(QPoint(margin+one*i,margin+one*j),QString::number( game->black_score[i][j]));
+//        }
+//    }
+//    painter.setPen(QPen(QColor("blue")));
+//    painter.setFont(QFont("微软雅黑",10,700,false));
+//    for(int i=0;i<rowline;i++){
+//        for(int j=0;j<columnline;j++){
+//            painter.drawText(QPoint(margin+one*i,margin+one*j-10),QString::number( game->white_score[i][j]));
+//        }
+//    }//绘制分数（调试时用）
     if(  game->state==win){
         if(game->winx<0||game->winy<0) return;
         painter.setPen(QPen(QBrush(QColor("red")),8));
@@ -156,13 +172,14 @@ void Chessboard::paintEvent(QPaintEvent *)//绘制棋盘，棋子等信息
 
 void Chessboard::mouseMoveEvent(QMouseEvent *event)//鼠标监听，当玩家为下棋方，鼠标移动到棋盘上会出现棋子影像
 {
-    isselected=0;
+    isselected=0;setCursor(Qt::ArrowCursor);
     if(  game->state!=playing) return;
     if(  game->type==AA)return;
     if(  game->type==MA&&game->Gameflags!=game->player1->myflag) return;
     x=event->x();
     y=event->y();
     if(x<margin||y<margin||x>margin+20*one||y>margin+20*one)return;
+    this->setCursor(hand);
     int minx;
     int miny;
     if((x-margin)%one>one-((x-margin)%one)){
@@ -289,7 +306,26 @@ void Chessboard::on_btmyset_clicked()
         }
 }
 
-void Chessboard::on_player1time_overflow()
+
+void Chessboard::on_ai_clicked()
 {
 
+   nofai++;
+   if(nofai%2==0){//关闭
+       game->isdeposit=0;
+       ui->ai->setToolTip("开启托管");
+       ui->ai->setStyleSheet("background-image: url(:/reso/pix/aiopen.png);background-color:transparent;");
+       emit sendmesschat(QTime::currentTime().toString()+' '+game->player1->name+"关闭托管");
+       ui->meslist->addItem(QTime::currentTime().toString()+' '+game->player1->name+"关闭托管");
+
+
+   }else{//开启
+       game->isdeposit=1;
+       ui->ai->setToolTip("关闭托管");
+       ui->ai->setStyleSheet("background-image: url(:/reso/pix/aiclose.png);background-color:transparent;");
+       emit sendmesschat(QTime::currentTime().toString()+' '+game->player1->name+"开启托管");
+       ui->meslist->addItem(QTime::currentTime().toString()+' '+game->player1->name+"关闭托管");
+
+   }
+   game->aifirst=1;
 }

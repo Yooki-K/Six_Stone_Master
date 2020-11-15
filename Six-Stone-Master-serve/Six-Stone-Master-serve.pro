@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui network
-QT       +=multimedia
+QT       +=multimedia concurrent
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Six-Stone-Master-serve
@@ -33,7 +33,8 @@ SOURCES += \
     gplayer.cpp \
     gamemodel.cpp \
     severform.cpp \
-    mysocket.cpp
+    mysocket.cpp \
+    waitplayer.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -45,7 +46,8 @@ HEADERS += \
     gamemodel.h \
     database.hpp \
     severform.h \
-    mysocket.h
+    mysocket.h \
+    waitplayer.h
 
 FORMS += \
         mainwindow.ui \
@@ -60,3 +62,4 @@ DISTFILES += \
     reso/head portrait/tx1.jpg \
     reso/head portrait/tx2.jpg \
     reso/head portrait/tx3.jpg
+RC_FILE =seticon.rc

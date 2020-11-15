@@ -9,6 +9,7 @@
 #include<math.h>
 #include<QTime>
 #include<QMediaPlayer>
+#include<QCursor>
 namespace Ui {
 class Chessboard;
 }
@@ -17,6 +18,7 @@ class Chessboard : public QWidget
 {
     Q_OBJECT
 public:
+    int nofai=0;
     bool isselected=0;//鼠标监听，当前位置是否可以落子
     int x=-1;int y=-1;//鼠标坐标
     int clickx=-1;int clicky=-1;//落子坐标
@@ -38,7 +40,7 @@ private slots:
     void on_lineEdit_returnPressed();//消息框回车发送消息
     void on_btmyset_clicked();//设置按钮
     void on_setvolume_valueChanged(int value);//音量改变时调用的函数
-    void on_player1time_overflow();
+    void on_ai_clicked();
 
 signals:
     void mouseRelease();//落子信号
@@ -51,6 +53,7 @@ public slots:
     void change(bool);//更改下棋方
 private:
     Ui::Chessboard *ui;
+    QCursor hand;
 };
 
 #endif // CHESSBOARD_H

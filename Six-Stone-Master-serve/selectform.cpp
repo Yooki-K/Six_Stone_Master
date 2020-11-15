@@ -8,12 +8,14 @@ Selectform::Selectform(QWidget *parent) :
     ui->setupUi(this);
     ui->ButtonEasy->hide();
     ui->ButtonDiff->hide();
+    ui->ButtonBack->hide();
     ui->ButtonAA->installEventFilter(this);  //在窗体上为ButtonAA安装过滤器
     ui->ButtonMA->installEventFilter(this);  //在窗体上为ButtonMA安装过滤器
     ui->ButtonMM->installEventFilter(this);  //在窗体上为ButtonMM安装过滤器
     ui->ButtonEasy->installEventFilter(this);  //在窗体上为ButtonEasy安装过滤器
     ui->ButtonDiff->installEventFilter(this);  //在窗体上为ButtonDiff安装过滤器
     ui->ButtonOn->installEventFilter(this);
+    ui->ButtonBack->installEventFilter(this);
     connect(ui->ButtonAA,&QPushButton::clicked,this,&Selectform::ButtonAAclicked);
     connect(ui->ButtonMA,&QPushButton::clicked,this,&Selectform::ButtonMAclicked);
     connect(ui->ButtonMM,&QPushButton::clicked,this,&Selectform::ButtonMMclicked);
@@ -47,12 +49,14 @@ bool Selectform::eventFilter(QObject *watched, QEvent *event)//对按钮进行�
             ui->ButtonMA->setStyleSheet("color:rgb(255,255,255);font: 45pt;");
             ui->ButtonEasy->show();
             ui->ButtonDiff->show();
+            ui->ButtonBack->show();
           }
           else if (event->type()==QEvent::Leave)
           {
              ui->ButtonMA->setStyleSheet("color:rgb(255,255,0);font: 30pt;");
              ui->ButtonEasy->hide();
              ui->ButtonDiff->hide();
+             ui->ButtonBack->hide();
            }
      }
 
@@ -65,6 +69,17 @@ bool Selectform::eventFilter(QObject *watched, QEvent *event)//对按钮进行�
           else if (event->type()==QEvent::Leave)
           {
              ui->ButtonMM->setStyleSheet("color:rgb(255,255,0);font: 30pt;");
+           }
+     }
+     if (watched==ui->ButtonBack)
+     {
+          if (event->type()==QEvent::Enter)
+          {
+            ui->ButtonBack->setStyleSheet("color:rgb(255,255,255);font: 45pt;");
+          }
+          else if (event->type()==QEvent::Leave)
+          {
+             ui->ButtonBack->setStyleSheet("color:rgb(255,255,0);font: 30pt;");
            }
      }
      if (watched==ui->ButtonEasy)
@@ -108,17 +123,6 @@ void Selectform::ButtonMMclicked()
     emit sendmes(MM,none);
     this->close();
 }
-
-void Selectform::showEvent()
-{
-    ui->ButtonEasy->hide();
-    ui->ButtonDiff->hide();
-    ui->ButtonMM->show();
-    ui->ButtonAA->show();
-    ui->ButtonMA->show();
-    ui->ButtonOn->show();
-}
-
 void Selectform::ButtonMAclicked()
 {
     ui->ButtonMM->hide();
@@ -150,5 +154,16 @@ void Selectform::ButtonDiffclicked()
 void Selectform::ButtonOnclicked()
 {
     this->close();
-    emit online();  
+    emit online();
+}
+
+void Selectform::on_ButtonBack_clicked()
+{
+    ui->ButtonEasy->hide();
+    ui->ButtonDiff->hide();
+    ui->ButtonBack->hide();
+    ui->ButtonMM->show();
+    ui->ButtonAA->show();
+    ui->ButtonMA->show();
+    ui->ButtonOn->show();
 }

@@ -12,14 +12,13 @@
 enum Gametype{MM,MA,AA};//游戏模式,创建游戏时赋值
 enum Gamestate{win,playing,death,waiting};//游戏状态,初始化时设置
 enum GameAI{easy,diff,none};//AI模式,创建游戏时赋值
+enum mestype{start=-5,ready};
 enum what{iswhite=0,isblack,isempty};//棋盘位置落子情况
 const int margin=45;
 const int rowline=21;
 const int columnline=21;
 const int r=20;
 const int one=45;
-
-const char headpath[3][29]={":/rso/head portrait/tx1.jpg",":/reso/head portrait/tx2.jpg",":/reso/head portrait/tx3.jpg"};//记录头像路径
 
 
 

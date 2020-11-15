@@ -56,6 +56,7 @@ void GPlayer::myturn(int x,int y){
     game->Gameflags=!game->Gameflags;//换手
     backx=x;backy=y;
     game->backx=x;game->backy=y;
+    qDebug()<<game->backx<<" "<<game->backy<<"gp";
 }
 
 QString GPlayer::inttotime(int sum)
